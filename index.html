@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Routine Dashboard — Summer 2026</title>
+<style>
+  :root{
+    --bg:#0e1116; --surface:#171b22; --surface2:#1e242d; --line:#262d38;
+    --txt:#e6e9ef; --muted:#8b94a3; --accent:#5dcaa5; --accent2:#378add;
+    --amber:#ef9f27; --red:#e24b4a; --green:#97c459; --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:18px 16px 120px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+  .hi h1{font-size:21px;font-weight:600}
+  .hi p{color:var(--muted);font-size:13px}
+  .pswitch{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
+  .pswitch button{border:0;background:transparent;color:var(--muted);font-size:13px;font-weight:600;padding:6px 14px;border-radius:999px;cursor:pointer}
+  .pswitch button.on{background:var(--accent);color:#04342c}
+  .banner{background:linear-gradient(0deg,var(--surface2),var(--surface2));border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+  .banner .dot{width:9px;height:9px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 0 rgba(239,159,39,.6);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(239,159,39,.5)}70%{box-shadow:0 0 0 10px rgba(239,159,39,0)}100%{box-shadow:0 0 0 0 rgba(239,159,39,0)}}
+  .banner b{font-weight:600}.banner span{color:var(--muted);font-size:13px}
+  .grid{display:grid;gap:10px}
+  .g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+  .streak{text-align:center}
+  .streak .n{font-size:26px;font-weight:700;line-height:1}
+  .streak .l{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.4px}
+  .streak.live .n{color:var(--green)}.streak.dead .n{color:var(--muted);opacity:.55}
+  .streak .fire{font-size:12px}
+  .sec-t{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:22px 2px 10px}
+  .bar{margin-bottom:13px}
+  .bar .top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+  .bar .top .v{color:var(--muted)}
+  .track{height:9px;background:var(--surface2);border-radius:999px;overflow:hidden}
+  .fill{height:100%;border-radius:999px;transition:width .4s}
+  .quest{display:flex;align-items:center;gap:11px;padding:11px 13px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:var(--surface);cursor:pointer;transition:.15s}
+  .quest:hover{border-color:#33404f}
+  .quest.now{border-color:var(--amber);background:#1d2129}
+  .quest .box{width:21px;height:21px;border-radius:6px;border:2px solid var(--muted);flex:none;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .quest.done .box{background:var(--accent);border-color:var(--accent);color:#04342c}
+  .quest.done .lab{color:var(--muted);text-decoration:line-through}
+  .quest .lab{flex:1;font-size:14px}
+  .quest .pts{font-size:12px;color:var(--muted)}
+  .quest .nowtag{font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px}
+  label.fld{display:block;margin-bottom:13px}
+  label.fld span{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
+  input,select,textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:10px 12px;font-size:15px;font-family:inherit}
+  input:focus,select,textarea:focus{outline:none;border-color:var(--accent2)}
+  .btn{background:var(--accent);color:#04342c;border:0;border-radius:10px;padding:12px 18px;font-size:15px;font-weight:600;cursor:pointer;width:100%}
+  .btn.ghost{background:var(--surface2);color:var(--txt);border:1px solid var(--line)}
+  .btn.sm{width:auto;padding:8px 14px;font-size:13px}
+  .row{display:flex;gap:10px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase}
+  .pr{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .pr .ex{font-weight:600}.pr .best{color:var(--accent)}
+  .arena-p{display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;border:1px solid var(--line);margin-bottom:10px}
+  .arena-p .lvl{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;flex:none}
+  .arena-p .nm{font-weight:600;font-size:16px}.arena-p .sub{color:var(--muted);font-size:12px}
+  .arena-p .pts{margin-left:auto;text-align:right}.arena-p .pts b{font-size:20px}
+  .lead{border-color:var(--accent)!important;background:#13201b}
+  .company{text-align:center;padding:16px;background:var(--surface2);border-radius:12px;margin-bottom:14px}
+  .company .lvl{font-size:34px;font-weight:800;color:var(--accent)}
+  .company .l{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  nav{position:fixed;bottom:0;left:0;right:0;background:rgba(18,22,28,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 4px 14px;z-index:9}
+  nav button{border:0;background:transparent;color:var(--muted);font-size:10px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 8px;text-transform:uppercase;letter-spacing:.3px}
+  nav button .ic{font-size:19px;line-height:1}
+  nav button.on{color:var(--accent)}
+  .hide{display:none}
+  .mini{color:var(--muted);font-size:12px;margin-top:4px}
+  .chart-wrap{margin:6px 0 22px}
+  svg .axis{stroke:var(--line)}svg text{fill:var(--muted);font-size:10px}
+  .empty{color:var(--muted);font-size:13px;text-align:center;padding:20px}
+  .subnav{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+  .subnav button{flex:1;min-width:68px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:13px;font-weight:600;padding:9px;border-radius:10px;cursor:pointer}
+  .subnav button.on{background:var(--accent);color:#04342c;border-color:var(--accent)}
+  details{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+  details summary{padding:13px 14px;font-weight:600;font-size:14px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+  details summary::-webkit-details-marker{display:none}
+  details summary .c{color:var(--muted);font-size:12px;font-weight:400}
+  details[open] summary{border-bottom:1px solid var(--line)}
+  .dbody{padding:8px 14px 12px}
+  .habit{padding:11px 0;border-bottom:1px solid var(--line)}
+  .habit:last-child{border-bottom:0}
+  .habit .a{font-size:14px;font-weight:600}
+  .habit .w{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.5}
+  .habit .h{font-size:12.5px;color:var(--accent);margin-top:3px;line-height:1.5}
+  .book{display:flex;gap:12px;padding:13px;border:1px solid var(--line);border-radius:12px;margin-bottom:9px;background:var(--surface)}
+  .book .num{font-size:20px;font-weight:800;color:var(--accent);flex:none;width:22px}
+  .book .bt{font-weight:600;font-size:15px}
+  .book .ba{color:var(--muted);font-size:12.5px;margin:1px 0 5px}
+  .book .bw{font-size:13px;line-height:1.5}
+  .book .theme{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--accent2);border:1px solid var(--line);padding:2px 7px;border-radius:6px;margin-top:7px}
+  .tcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;margin-bottom:10px}
+  .tcard h4{font-size:14px;margin-bottom:6px;display:flex;justify-content:space-between}
+  .tcard h4 span{color:var(--muted);font-size:12px;font-weight:400}
+  .exrow{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line);line-height:1.4}
+  .exrow:last-child{border-bottom:0}.exrow .sr{color:var(--muted);flex:none}
+  .metric{background:var(--surface2);border-radius:10px;padding:11px;text-align:center}
+  .metric .mv{font-size:19px;font-weight:700;color:var(--accent)}.metric .ml{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+  .pill{display:inline-block;background:var(--surface2);border-radius:7px;padding:6px 10px;font-size:12.5px;margin:0 5px 6px 0}
+  .note{font-size:12.5px;color:var(--muted);line-height:1.6;margin:8px 2px}
+  .lead-line{font-size:13px;line-height:1.6;background:#13201b;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="hi"><h1 id="greet">Good morning</h1><p id="date"></p></div>
+    <div class="pswitch" id="pswitch"></div>
+  </header>
+
+  <div id="t-today">
+    <div class="banner"><div class="dot"></div><div><b id="focusTask">All quests done</b><br><span id="focusSub">Nice — you're clear for today</span></div></div>
+    <div class="grid g4" id="streaks"></div>
+    <div class="sec-t">Today's targets</div>
+    <div id="bars"></div>
+    <div class="sec-t">Daily quests</div>
+    <div id="quests"></div>
+  </div>
+
+  <div id="t-log" class="hide">
+    <div class="sec-t">Log tonight</div>
+    <div class="card">
+      <div class="row"><label class="fld" style="flex:1"><span>Calories</span><input id="i-cal" type="number" inputmode="numeric"></label><label class="fld" style="flex:1"><span>Protein (g)</span><input id="i-protein" type="number" inputmode="numeric"></label></div>
+      <div class="row"><label class="fld" style="flex:1"><span>Water (oz)</span><input id="i-water" type="number" inputmode="numeric"></label><label class="fld" style="flex:1"><span>Sleep (hrs)</span><input id="i-sleep" type="number" step="0.5" inputmode="decimal"></label></div>
+      <div class="row"><label class="fld" style="flex:1"><span>Weight (lb)</span><input id="i-weight" type="number" step="0.1" inputmode="decimal"></label><label class="fld" style="flex:1"><span>Mood</span><select id="i-mood"><option value="">—</option><option>😖 rough</option><option>😐 meh</option><option>🙂 good</option><option>😄 great</option><option>🔥 locked in</option></select></label></div>
+      <label class="fld"><span>Notes</span><textarea id="i-notes" rows="2"></textarea></label>
+      <button class="btn" onclick="saveLog()">Save today's log</button>
+      <p class="mini" id="logSaved"></p>
+    </div>
+    <div class="sec-t">Targets &amp; stakes</div>
+    <div class="card">
+      <div class="row"><label class="fld" style="flex:1"><span>Protein target</span><input id="tg-protein" type="number"></label><label class="fld" style="flex:1"><span>Sleep target</span><input id="tg-sleep" type="number" step="0.5"></label></div>
+      <div class="row"><label class="fld" style="flex:1"><span>Calorie target</span><input id="tg-cal" type="number"></label><label class="fld" style="flex:1"><span>Water target (oz)</span><input id="tg-water" type="number"></label></div>
+      <label class="fld"><span>Weekly stakes (loser owes…)</span><input id="tg-stakes" type="text" placeholder="e.g. loser buys dinner"></label>
+      <button class="btn ghost" onclick="saveSettings()">Save settings</button>
+      <button class="btn ghost" style="margin-top:8px;color:var(--red)" onclick="if(confirm('Wipe ALL logged data for both players? This cannot be undone.')){localStorage.removeItem(KEY);S=load();cur='Aidan';render()}">Reset all data</button>
+    </div>
+  </div>
+
+  <div id="t-workout" class="hide">
+    <div class="sec-t">Add a set</div>
+    <div class="card">
+      <label class="fld"><span>Exercise</span><input id="w-ex" type="text" placeholder="Bench press" list="exlist"><datalist id="exlist"></datalist></label>
+      <div class="row"><label class="fld" style="flex:1"><span>Weight (lb)</span><input id="w-wt" type="number" inputmode="decimal"></label><label class="fld" style="flex:1"><span>Reps</span><input id="w-reps" type="number" inputmode="numeric"></label></div>
+      <p class="mini" id="lastSet"></p>
+      <button class="btn" onclick="addSet()">Log set</button>
+    </div>
+    <div class="sec-t">Today's sets</div>
+    <div id="todaySets"></div>
+    <div class="sec-t">Personal records</div>
+    <div id="prs"></div>
+  </div>
+
+  <div id="t-history" class="hide">
+    <div class="sec-t">Last 14 days</div>
+    <div class="card" style="overflow-x:auto"><table id="histTable"></table></div>
+  </div>
+
+  <div id="t-charts" class="hide">
+    <div class="sec-t">Trends (14 days)</div>
+    <div class="chart-wrap"><div class="mini" style="margin-bottom:4px">Weight (lb)</div><div id="ch-weight"></div></div>
+    <div class="chart-wrap"><div class="mini" style="margin-bottom:4px">Protein (g)</div><div id="ch-protein"></div></div>
+    <div class="chart-wrap"><div class="mini" style="margin-bottom:4px">Sleep (hrs)</div><div id="ch-sleep"></div></div>
+  </div>
+
+  <div id="t-arena" class="hide">
+    <div class="sec-t">Two Wheel Deals — company level</div>
+    <div class="company"><div class="lvl" id="coLvl">1</div><div class="l">combined level · season week <span id="weekNo">1</span></div></div>
+    <div class="sec-t">The arena · this week</div>
+    <div id="arenaPlayers"></div>
+    <div class="sec-t">Stakes</div>
+    <div class="card"><span id="stakesView" style="font-size:14px"></span></div>
+    <p class="mini" style="text-align:center;margin-top:14px">Every quest you complete scores points. Weekly reset on Mondays.</p>
+  </div>
+
+  <div id="t-plan" class="hide">
+    <div class="subnav" id="planNav"></div>
+    <div id="planBody"></div>
+  </div>
+</div>
+
+<nav id="nav"></nav>
+
+<script>
+const TODAY=()=>new Date(new Date().getTime()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+const KEY='rd_v1';
+const PLAYERS=['Aidan','Dante'];
+const QUESTS=[
+  {id:'plan',label:'Write top-3 if-then plan',pts:10},
+  {id:'workout',label:'Train (per program)',pts:15},
+  {id:'protein',label:'Hit protein target',pts:10,auto:'protein'},
+  {id:'cal',label:'Hit calorie target',pts:10,auto:'cal'},
+  {id:'meditate',label:'10-min meditation',pts:5},
+  {id:'focus',label:'Phone-down deep-work block',pts:10},
+  {id:'study',label:'Study / skill block (business)',pts:10},
+  {id:'homecook',label:'Ate every meal at home',pts:10},
+  {id:'sleep',label:'Sleep ≥ 8h',pts:10,auto:'sleep'},
+  {id:'review',label:'Evening review + journal',pts:5}
+];
+const DEF_T={protein:155,sleep:8.5,cal:3300,water:120};
+let S=load(), cur=S.cur||'Aidan', tab='today';
+
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.players)return d}catch(e){}
+  const o={cur:'Aidan',stakes:'Loser runs the next bike pickup solo.',players:{}};
+  PLAYERS.forEach(p=>o.players[p]={days:{},targets:{...DEF_T}});return o}
+function save(){localStorage.setItem(KEY,JSON.stringify(S))}
+function P(){return S.players[cur]}
+function day(d){d=d||TODAY();if(!P().days[d])P().days[d]={m:{},q:{},sets:[]};return P().days[d]}
+function T(){return Object.assign({},DEF_T,P().targets||{})}
+function round(n){return Math.round((n+Number.EPSILON)*10)/10}
+
+function lastNdays(n){const a=[],t=new Date(TODAY());for(let i=n-1;i>=0;i--){const d=new Date(t);d.setDate(d.getDate()-i);a.push(d.toISOString().slice(0,10))}return a}
+function autoQuestDone(d,q){const day_=P().days[d];if(!day_)return false;if(q.auto){const v=+day_.m[q.auto];const tg=T()[q.auto];return v>=tg&&v>0}return !!day_.q[q.id]}
+function questDone(d,q){const day_=P().days[d];if(!day_)return false;if(day_.q[q.id]!==undefined)return !!day_.q[q.id];return q.auto?autoQuestDone(d,q):false}
+
+function streak(test){const days=lastNdays(60).reverse();let c=0;for(let i=0;i<days.length;i++){if(test(days[i]))c++;else if(i===0)continue;else break}return c}
+function dayScore(d){let s=0;QUESTS.forEach(q=>{if(questDone(d,q))s+=q.pts});return s}
+function weekDays(){const t=new Date(TODAY());const dow=(t.getDay()+6)%7;const mon=new Date(t);mon.setDate(t.getDate()-dow);const a=[];for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);if(d<=t)a.push(d.toISOString().slice(0,10))}return a}
+function weekScore(p){const sv=cur;cur=p;const s=weekDays().reduce((a,d)=>a+dayScore(d),0);cur=sv;return s}
+function allTime(p){const sv=cur;cur=p;let s=0;Object.keys(P().days).forEach(d=>s+=dayScore(d));cur=sv;return s}
+function weekNo(){const t=new Date(TODAY());const start=new Date('2026-06-01');return Math.floor((t-start)/(7*864e5))+1}
+
+function render(){
+  const h=new Date().getHours();
+  document.getElementById('greet').textContent=(h<12?'Good morning':h<18?'Good afternoon':'Good evening')+', '+cur;
+  document.getElementById('date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  // player switch
+  document.getElementById('pswitch').innerHTML=PLAYERS.map(p=>`<button class="${p===cur?'on':''}" onclick="setP('${p}')">${p}</button>`).join('');
+  renderToday();renderLog();renderWorkout();renderHistory();renderCharts();renderArena();renderPlan();renderNav();
+}
+function renderNav(){
+  const tabs=[['today','','☀','Today'],['plan','','📋','Plan'],['log','','✎','Log'],['workout','','🏋','Lift'],['history','','▤','History'],['charts','','📈','Charts'],['arena','','🏆','Arena']];
+  document.getElementById('nav').innerHTML=tabs.map(t=>`<button class="${t[0]===tab?'on':''}" onclick="go('${t[0]}')"><span class="ic">${t[2]}</span>${t[3]}</button>`).join('');
+  ['today','plan','log','workout','history','charts','arena'].forEach(t=>document.getElementById('t-'+t).classList.toggle('hide',t!==tab));
+}
+function go(t){tab=t;render()}
+function setP(p){cur=p;S.cur=p;save();render()}
+
+function renderToday(){
+  // focus banner = first undone quest today
+  const undone=QUESTS.find(q=>!questDone(TODAY(),q));
+  document.getElementById('focusTask').textContent=undone?undone.label:'All quests done';
+  document.getElementById('focusSub').textContent=undone?`Up next · +${undone.pts} pts`:"You're clear for today 🔥";
+  // streaks
+  const t=T();
+  const sd=[
+    ['Sleep',streak(d=>+day_m(d,'sleep')>=8)],
+    ['Workout',streak(d=>questDone(d,{id:'workout'}))],
+    ['Protein',streak(d=>+day_m(d,'protein')>=t.protein&&+day_m(d,'protein')>0)],
+    ['Home meals',streak(d=>questDone(d,{id:'homecook'}))]
+  ];
+  document.getElementById('streaks').innerHTML=sd.map(([l,n])=>`<div class="card streak ${n>0?'live':'dead'}"><div class="n">${n}</div><div class="l">${l}</div><div class="fire">${n>0?'🔥 on':'— start it'}</div></div>`).join('');
+  // bars
+  const m=day().m;
+  const bars=[['Calories',+m.cal||0,t.cal,'var(--accent2)'],['Protein',+m.protein||0,t.protein,'var(--accent)'],['Water',+m.water||0,t.water,'var(--accent2)'],['Sleep',+m.sleep||0,t.sleep,'var(--green)']];
+  document.getElementById('bars').innerHTML=bars.map(([l,v,tg,c])=>{const pct=Math.min(100,Math.round(v/tg*100))||0;return `<div class="bar"><div class="top"><span>${l}</span><span class="v">${round(v)} / ${tg}</span></div><div class="track"><div class="fill" style="width:${pct}%;background:${c}"></div></div></div>`}).join('');
+  // quests
+  document.getElementById('quests').innerHTML=QUESTS.map(q=>{const done=questDone(TODAY(),q);const isNow=!done&&undone&&undone.id===q.id;return `<div class="quest ${done?'done':''} ${isNow?'now':''}" onclick="toggleQ('${q.id}')"><div class="box">${done?'✓':''}</div><div class="lab">${q.label}</div>${isNow?'<span class="nowtag">now</span>':`<span class="pts">+${q.pts}</span>`}</div>`}).join('');
+}
+function day_m(d,k){const dd=P().days[d];return dd&&dd.m[k]?dd.m[k]:0}
+function toggleQ(id){const d=day();d.q[id]=!questDone(TODAY(),QUESTS.find(q=>q.id===id));save();renderToday();renderArena()}
+
+function renderLog(){const m=day().m;['cal','protein','water','sleep','weight','notes'].forEach(k=>{const el=document.getElementById('i-'+k);if(el)el.value=m[k]??''});document.getElementById('i-mood').value=m.mood||'';
+  const t=T();document.getElementById('tg-protein').value=t.protein;document.getElementById('tg-sleep').value=t.sleep;document.getElementById('tg-cal').value=t.cal;document.getElementById('tg-water').value=t.water;document.getElementById('tg-stakes').value=S.stakes||'';}
+function saveLog(){const m=day().m;['cal','protein','water','sleep','weight','notes'].forEach(k=>{const v=document.getElementById('i-'+k).value;m[k]=v});m.mood=document.getElementById('i-mood').value;save();document.getElementById('logSaved').textContent='Saved ✓  '+new Date().toLocaleTimeString();render()}
+function saveSettings(){P().targets={protein:+document.getElementById('tg-protein').value||DEF_T.protein,sleep:+document.getElementById('tg-sleep').value||DEF_T.sleep,cal:+document.getElementById('tg-cal').value||DEF_T.cal,water:+document.getElementById('tg-water').value||DEF_T.water};S.stakes=document.getElementById('tg-stakes').value;save();render();go('arena')}
+
+function renderWorkout(){
+  const sets=day().sets||[];
+  document.getElementById('todaySets').innerHTML=sets.length?sets.map((s,i)=>`<div class="quest"><div class="lab"><b>${s.ex}</b> · ${s.wt} lb × ${s.reps}</div><span class="pts" onclick="delSet(${i})" style="cursor:pointer">✕</span></div>`).join(''):'<div class="empty">No sets logged today</div>';
+  // PRs across all days
+  const best={};Object.values(P().days).forEach(d=>(d.sets||[]).forEach(s=>{const k=s.ex.toLowerCase();const sc=(+s.wt)*(1+(+s.reps)/30);if(!best[k]||sc>best[k].sc)best[k]={ex:s.ex,wt:s.wt,reps:s.reps,sc}}));
+  const ks=Object.keys(best);
+  document.getElementById('prs').innerHTML=ks.length?ks.map(k=>`<div class="pr"><span class="ex">${best[k].ex}</span><span class="best">${best[k].wt} lb × ${best[k].reps}</span></div>`).join(''):'<div class="empty">Log sets to build your PR board</div>';
+  document.getElementById('exlist').innerHTML=ks.map(k=>`<option value="${best[k].ex}">`).join('');
+  document.getElementById('w-ex').oninput=showLast;showLast();
+}
+function showLast(){const ex=document.getElementById('w-ex').value.trim().toLowerCase();if(!ex){document.getElementById('lastSet').textContent='';return}let last=null;lastNdays(60).reverse().forEach(d=>{const dd=P().days[d];if(dd)(dd.sets||[]).forEach(s=>{if(s.ex.toLowerCase()===ex)last=s})});document.getElementById('lastSet').textContent=last?`Last time: ${last.wt} lb × ${last.reps} — beat it`:'No history — set your baseline'}
+function addSet(){const ex=document.getElementById('w-ex').value.trim();const wt=+document.getElementById('w-wt').value;const reps=+document.getElementById('w-reps').value;if(!ex||!wt||!reps)return;day().sets.push({ex,wt,reps});if(P().days[TODAY()].q.workout===undefined)P().days[TODAY()].q.workout=true;save();document.getElementById('w-wt').value='';document.getElementById('w-reps').value='';render()}
+function delSet(i){day().sets.splice(i,1);save();renderWorkout()}
+
+function renderHistory(){
+  const days=lastNdays(14).reverse();
+  let h='<tr><th>Date</th><th>Cal</th><th>Pro</th><th>Sleep</th><th>Wt</th><th>Quests</th></tr>';
+  days.forEach(d=>{const dd=P().days[d];const m=dd?dd.m:{};const done=QUESTS.filter(q=>questDone(d,q)).length;const pct=Math.round(done/QUESTS.length*100);const lbl=new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});h+=`<tr><td>${lbl}</td><td>${m.cal||'—'}</td><td>${m.protein||'—'}</td><td>${m.sleep||'—'}</td><td>${m.weight||'—'}</td><td>${dd?pct+'%':'—'}</td></tr>`});
+  document.getElementById('histTable').innerHTML=h;
+}
+
+function lineChart(elId,key,color){
+  const days=lastNdays(14);const pts=days.map(d=>({d,v:+day_m(d,key)}));const vals=pts.filter(p=>p.v>0);
+  const el=document.getElementById(elId);
+  if(vals.length<2){el.innerHTML='<div class="empty">Need 2+ days of data</div>';return}
+  const W=720,H=140,pad=26;const xs=Object.values(vals).map(p=>p.v);const mn=Math.min(...xs),mx=Math.max(...xs);const rng=(mx-mn)||1;
+  const X=i=>pad+i*(W-pad*2)/(days.length-1);const Y=v=>H-pad-((v-mn)/rng)*(H-pad*2);
+  let path='',dots='';let started=false;
+  days.forEach((d,i)=>{const v=+day_m(d,key);if(v>0){const x=X(i),y=Y(v);path+=(started?'L':'M')+x+' '+y+' ';dots+=`<circle cx="${x}" cy="${y}" r="3" fill="${color}"/>`;started=true}});
+  const labs=`<text x="${pad}" y="${H-6}">${new Date(days[0]).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</text><text x="${W-pad}" y="${H-6}" text-anchor="end">today</text><text x="2" y="${pad}">${round(mx)}</text><text x="2" y="${H-pad}">${round(mn)}</text>`;
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%"><line class="axis" x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}"/><path d="${path}" fill="none" stroke="${color}" stroke-width="2.5"/>${dots}${labs}</svg>`;
+}
+function renderCharts(){lineChart('ch-weight','weight','#378add');lineChart('ch-protein','protein','#5dcaa5');lineChart('ch-sleep','sleep','#97c459')}
+
+function renderArena(){
+  const scores=PLAYERS.map(p=>({p,wk:weekScore(p),all:allTime(p),lvl:Math.floor(allTime(p)/100)+1}));
+  const lead=Math.max(...scores.map(s=>s.wk));
+  document.getElementById('arenaPlayers').innerHTML=scores.map(s=>`<div class="arena-p ${s.wk===lead&&lead>0?'lead':''}"><div class="lvl" style="background:${s.p===cur?'var(--accent)':'var(--surface2)'};color:${s.p===cur?'#04342c':'var(--txt)'}">${s.lvl}</div><div><div class="nm">${s.p}${s.wk===lead&&lead>0?' 👑':''}</div><div class="sub">level ${s.lvl} · ${s.all} pts all-time</div></div><div class="pts"><b>${s.wk}</b><div class="sub">this week</div></div></div>`).join('');
+  document.getElementById('coLvl').textContent=Math.floor(scores.reduce((a,s)=>a+s.all,0)/250)+1;
+  document.getElementById('weekNo').textContent=weekNo();
+  document.getElementById('stakesView').textContent=S.stakes||'No stakes set — add one in Log → settings.';
+}
+
+/* ===== PLAN: habits · diet · training · books ===== */
+const LAWS=[
+ ['If-then beats willpower','Writing “If [situation], then I [action]” lifts follow-through with a medium-large effect (d=.65 across 94 studies — Gollwitzer & Sheeran 2006).'],
+ ['Repetition builds automaticity','A behavior repeated in a fixed context becomes automatic in ~66 days (range 18–254). One missed day doesn’t break it — never miss twice (Lally 2010).'],
+ ['Cues live in your environment','~43% of daily behavior is habit, triggered by stable surroundings (Wood 2002). Engineer the cue; don’t fight the craving.']
+];
+const HABITS=[
+ ['Morning & keystone',[
+  ['Fixed wake time, 7 days/week','🛠️ Anchors the day’s whole habit chain to one stable cue (Jocko’s non-negotiable).','Alarm across the room, same time even weekends.'],
+  ['Make your bed first','🛠️ A finished task in the first 2 minutes builds momentum (McRaven).','Bed made before you touch your phone.'],
+  ['Lay out tomorrow’s cues tonight','🔬 Environment = the trigger (Wood 2002).','Gym clothes by the door, scanner tab open — a 2-min nightly setup.'],
+  ['Write your top-3 as if-then plans','🔬 The highest-ROI move in the whole report (Gollwitzer 2006).','“If it’s 9am, then I message 5 sellers.” One line each, every morning.'],
+  ['Hardest task first (“eat the frog”)','🛠️ Protects your sharpest hours before the day fragments.','One 60–90 min block before the noise starts.']
+ ]],
+ ['Deep work & focus',[
+  ['Single-task in timed blocks','🔬 Task-switching leaves “attention residue” that degrades hard work (Leroy 2009).','50–90 min, one thing only.'],
+  ['Finish or write the next step before switching','🔬 Unfinished tasks are the #1 residue trigger (Leroy 2009).','Jot the next action, then close the task.'],
+  ['Phone in another room during focus','🔬 Removes the interruption — the real culprit. (The “mere presence drains your brain” claim was refuted.)','Phone in a drawer or other room, not face-down on the desk.'],
+  ['Notifications off + batch messages','🔬 Every ping fragments attention (Leroy / Mark).','Check on a schedule — the top of each hour.'],
+  ['Time-block your calendar','🛠️ Give every hour a job so the day isn’t reactive (Newport).','Plan the blocks the night before.'],
+  ['A desk used only for deep work','🔬 A single-purpose location becomes the cue (Wood 2002).','No scrolling or eating there.']
+ ]],
+ ['Discipline systems',[
+  ['Track streaks, forgive one miss','🔬 One lapse is a non-event; a missed week is the real risk (Lally 2010).','This dashboard does it — just never miss twice.'],
+  ['Habit-stack onto existing anchors','🔬 Bolt the new habit to a rock-solid old one (Wood 2002).','“After I pour coffee, I write my top-3.”'],
+  ['Pre-decide meals, training & work','🔬 Routines lower stress and save bandwidth (Wood 2002).','Same meals and training slots every week.'],
+  ['Commitment device + accountability','🛠️ Stakes plus a rival make quitting cost something.','The Aidan-vs-Dante arena with real stakes.'],
+  ['Daily non-negotiables','🛠️ A short list you hit no matter what.','3–5 items that define a “won” day.']
+ ]],
+ ['Phone & distraction',[
+  ['Phone charges outside the bedroom','🛠️ Kills the night scroll and the first-thing-AM grab.','Charger lives in the kitchen.'],
+  ['One phone-free block daily','🛠️ Rebuilds tolerance for focus and boredom (Stanford challenge).','A phone-free deep-work hour.'],
+  ['Strip feed apps off the home screen','🛠️ Friction kills mindless opens.','Nothing one tap from home but your tools.'],
+  ['Skip the “dopamine detox” hype','🛠️ The detox framing isn’t well supported — but don’t open the day with the feed.','Tools first; earn the feed later.']
+ ]],
+ ['Fitness & body',[
+  ['Train 3–5×/week on fixed days','🛠️ Scheduled training becomes automatic.','Same days/times — see the Train tab.'],
+  ['Progressive overload — log every set','🛠️ Beat last session’s numbers.','Record weight × reps in the Lift tab.'],
+  ['Hit a high, consistent daily protein','🔬 Total daily protein drives muscle; timing/“window” is a myth (Schoenfeld 2013).','Protein at every meal — about 155g/day.'],
+  ['Train on low-motivation days anyway','🛠️ Discipline = showing up; the reps build automaticity.','A “minimum” session still counts.'],
+  ['Daily movement / steps','🛠️ Baseline health and recovery.','A walk after a deep-work block.']
+ ]],
+ ['Sleep & recovery',[
+  ['Consistent sleep/wake times','🛠️ Regularity matters (consensus — not verified in this pass).','Same bed and wake window daily.'],
+  ['7–9 hours, protected','🛠️ Recovery is when muscle is actually built.','Back-time bedtime from your wake alarm.'],
+  ['Screens down 30–60 min before bed','🛠️ Wind-down protects sleep onset.','Phone out, dim the lights, read.'],
+  ['Dark, cool room','🛠️ Better sleep depth.','Blackout + a cooler temperature.']
+ ]],
+ ['Nutrition',[
+  ['Protein at every meal','🔬 The trackable way to hit your daily total (Tagawa 2021).','A protein anchor on every plate.'],
+  ['Hydrate on a schedule','🛠️ Performance and appetite.','Water bottle as the cue; refill targets.'],
+  ['Eat every meal at home','🛠️ Saves money and controls quality — your stated goal.','Batch-cook; never default to takeout.']
+ ]],
+ ['Mindset & resilience',[
+  ['10-min daily meditation','🔬 Small-but-real gains in attention and impulse control (Zainal & Newman 2024). Not a magic fix.','Same time daily — an app or breath-count.'],
+  ['Evening reflection / journal','🛠️ Review what you controlled and would repeat.','3 lines at night.'],
+  ['One rep of voluntary discomfort','🛠️ Cold shower, last set, hard call (Stoic + Goggins).','Pick the harder option once a day.'],
+  ['Control dichotomy','🛠️ Act on what’s yours; ignore what isn’t.','When stressed, name “mine vs not mine.”']
+ ]],
+ ['Business & productivity',[
+  ['Daily top-3 priorities','🛠️ Three needle-movers before any busywork.','Written before you open email.'],
+  ['Weekly review + plan','🛠️ What worked, what’s next, restock the pipeline.','30 min, same slot (Sundays).'],
+  ['One deliberate-practice block','🛠️ Study the market, rehearse the pitch, learn comps.','30 min of skill-building daily.'],
+  ['Environment-design your selling','🔬 Same cue + no-interruption logic as deep work (Wood / Leroy).','A fixed daily outreach window, phone away.']
+ ]]
+];
+const BOOKS=[
+ ['Atomic Habits','James Clear','Discipline / systems','The operating system for everything else — builds the 1%-better daily systems that make fitness, learning and execution automatic.'],
+ ['The Almanack of Naval Ravikant','Eric Jorgenson','Wealth / thinking','The mental-model bible for getting rich with leverage (code, media, equity) — wealth without trading time.'],
+ ['Co-Intelligence','Ethan Mollick','AI business ★','The hype-free, founder-usable guide to building with AI right now — turns “AI is coming” into a concrete playbook.'],
+ ['$100M Offers','Alex Hormozi','Marketing / sales','Make offers so good people feel stupid saying no — pure cash-generation leverage for the flip and the AI build.'],
+ ['Influence','Robert Cialdini','Sales / persuasion','The science of why people say yes (reciprocity, scarcity, social proof) — what every great closer steals from.'],
+ ['Building a StoryBrand','Donald Miller','Marketing','A repeatable framework to make messaging so clear customers instantly get it — make the customer the hero.'],
+ ['Outlive','Peter Attia','Health / longevity','The no-BS longevity manual — train and eat now so you’re strong and sharp at 90, not just lean at 25.'],
+ ['The Laws of Human Nature','Robert Greene','Psychology','A field guide to what drives people beneath what they say — read motives, manage egos, win negotiations.'],
+ ['Thinking, Fast and Slow','Daniel Kahneman','Smarter / thinking','The Nobel map of your own biases — spot the mental traps wrecking your decisions before they cost money.'],
+ ['Meditations','Marcus Aurelius','Philosophy / stoicism','The 2,000-year-old discipline playbook founders and athletes live by — stay calm and unshakable building hard things.']
+];
+const DIET={
+ targets:[['~3,300','kcal / day'],['~155 g','protein'],['~470 g','carbs'],['~90 g','fat'],['120 oz','water']],
+ goal:'Lean bulk: eat ~400–500 kcal over maintenance → gain ~0.5–0.75 lb/week. You’re 6′3″ / 147 lb (underweight), so err high. Weigh weekly in the AM and adjust by the scale, not the math.',
+ principles:['The scale is the boss — set calories from your weekly weight trend, not a formula.','Progressive overload turns the surplus into muscle, not fat.','Don’t fear the surplus — your risk is under-eating, not over-eating.','Consistency beats perfection — tasty and repeatable wins.'],
+ foods:[
+  ['Proteins','Whole eggs + egg whites','Chicken thighs','85/15 ground beef','Canned tuna & salmon','Greek yogurt (full-fat / 2%)','Cottage cheese (4%)','Whole milk','Lentils & black beans','Tofu / tempeh'],
+  ['Carbs','White & brown rice','Oats','Potatoes & sweet potatoes','Pasta (incl. chickpea)','Bagels / whole-grain bread','Tortillas','Quinoa'],
+  ['Fats','Olive oil (drizzle post-cook)','Peanut & almond butter','Avocado','Nuts & trail mix','Chia & flax','Cheese','Canned coconut milk'],
+  ['Vegetables','Spinach','Peppers, onions, mushrooms','Broccoli & green beans','Frozen mixed veg','Canned tomatoes','Zucchini & carrots'],
+  ['Fruit','Bananas','Dates','Frozen mango & pineapple','Frozen berries','Raisins & dried apricots','Apples & oranges']
+ ],
+ snacks:['PB protein balls (oats + PB + honey + whey + dates)','Greek yogurt + granola + nuts + honey','Cottage cheese + fruit','Hard-boiled eggs','Trail mix','Tuna/chicken salad on crackers','Roasted chickpeas','Apple + peanut butter'],
+ drinks:['Mass-gainer smoothie (recipe below)','Whole milk with meals','Chocolate milk post-workout','Kefir / yogurt blends','Water + electrolytes for training','Coffee / green tea (away from meals)'],
+ smoothie:'1 cup whole milk + 1 cup full-fat Greek yogurt + 1 banana + ½ cup oats + 2 tbsp peanut butter + 1 scoop whey + a handful of spinach + 2 dates + 1 tbsp chia. Blend → ~900–1,100 cal, ~50g protein. Add 1 tbsp olive oil or ¼ avocado to push past 1,000 with no taste change.',
+ tricks:['Drink your calories — a smoothie or 2–3 glasses of milk adds 500–1,000 cal with near-zero fullness.','Olive-oil drizzle on finished rice/pasta/veg = +120–240 cal, no extra volume.','Cook oats in milk and rice in broth — more calories per identical bite.','Eat calorie-dense, not voluminous — bagels over salad, rice over big veg bowls.','Pair every meal with a calorie drink + keep a default high-cal snack for an easy +300–500.'],
+ day:[
+  ['Breakfast','Egg + potato scramble (4 eggs, potatoes, cheese, spinach) + 2 toast with PB + a glass of milk'],
+  ['Smoothie','The mass-gainer smoothie'],
+  ['Lunch','Chicken-thigh burrito bowl (thighs, rice, black beans, cheese, avocado, salsa)'],
+  ['Snack','Greek yogurt bowl or PB protein balls + fruit'],
+  ['Dinner','Beef & rice power bowl (85/15 beef, rice, roasted veg, olive oil) + a glass of milk']
+ ],
+ meals:['Chicken-thigh burrito bowls','Beef & rice power bowls','Egg + potato breakfast scramble (batch)','Tuna/salmon pasta salad','Lentil + beef chili','Teriyaki chicken + rice stir-fry']
+};
+const WORKOUT={
+ split:'4-day Upper / Lower — every muscle trained twice a week, the proven sweet spot for lean muscle gain.',
+ schedule:'Mon Upper A · Tue Lower A · Thu Upper B · Fri Lower B. (Wednesday + weekend off.)',
+ progression:'Double progression: start at the bottom of the rep range, add a rep each week until you hit the top of every set, then add 2.5–5 lb and reset. Log every set in the Lift tab.',
+ cardio:'You’re an ex-runner — keep just 1–2 easy 20–30 min zone-2 runs a week to hold your engine. Skip hard HIIT while bulking; it eats the surplus.',
+ note:'Tall + long limbs: prioritize full range of motion and clean form over ego weight. Muscle = training + the surplus + sleep — miss any one and it stalls.',
+ days:[
+  ['Upper A — strength',[['Barbell bench press','4 × 5–8'],['Barbell row','4 × 6–10'],['Overhead press','3 × 6–10'],['Lat pulldown','3 × 8–12'],['Incline DB press','3 × 8–12'],['Barbell curl','3 × 8–12'],['Triceps pushdown','3 × 10–15']]],
+  ['Lower A — strength',[['Back squat','4 × 5–8'],['Romanian deadlift','3 × 6–10'],['Bulgarian split squat','3 × 8–12'],['Leg curl','3 × 10–15'],['Standing calf raise','4 × 10–15'],['Hanging leg raise','3 × 10–15']]],
+  ['Upper B — hypertrophy',[['Weighted pull-up / pulldown','4 × 8–12'],['Incline barbell press','4 × 8–12'],['Seated cable row','3 × 10–12'],['DB shoulder press','3 × 10–12'],['Lateral raises','4 × 12–20'],['Hammer curls','3 × 10–15'],['Overhead triceps ext.','3 × 10–15']]],
+  ['Lower B — hypertrophy',[['Deadlift','3 × 4–6'],['Leg press','4 × 10–15'],['Walking lunges','3 × 10–12/leg'],['Leg extension','3 × 12–15'],['Seated calf raise','4 × 12–20'],['Cable crunch','3 × 10–15']]]
+ ]
+};
+let planSub='habits';
+const PLAN_TABS=[['habits','Habits'],['diet','Diet'],['train','Train'],['books','Books']];
+function renderPlan(){
+ document.getElementById('planNav').innerHTML=PLAN_TABS.map(t=>`<button class="${t[0]===planSub?'on':''}" onclick="setPlan('${t[0]}')">${t[1]}</button>`).join('');
+ document.getElementById('planBody').innerHTML=planSub==='habits'?planHabits():planSub==='diet'?planDiet():planSub==='train'?planTrain():planBooks();
+}
+function setPlan(s){planSub=s;renderPlan()}
+function planHabits(){
+ let h='<div class="lead-line"><b>The 3 laws everything hangs on</b><br>'+LAWS.map(l=>`• <b>${l[0]}</b> — ${l[1]}`).join('<br>')+'</div>';
+ h+='<p class="note">40 habits, grouped. 🔬 = backed by a peer-reviewed study · 🛠️ = practiced by disciplined performers / consensus. Tap a group to open.</p>';
+ HABITS.forEach((g,i)=>{
+  h+=`<details ${i===0?'open':''}><summary>${g[0]}<span class="c">${g[1].length}</span></summary><div class="dbody">`;
+  g[1].forEach(it=>{h+=`<div class="habit"><div class="a">${it[0]}</div><div class="w">${it[1]}</div><div class="h">→ ${it[2]}</div></div>`});
+  h+='</div></details>';
+ });
+ return h;
+}
+function planDiet(){
+ let h='<div class="grid g3" style="margin-bottom:10px">'+DIET.targets.slice(0,3).map(t=>`<div class="metric"><div class="mv">${t[0]}</div><div class="ml">${t[1]}</div></div>`).join('')+'</div>';
+ h+='<div class="grid g2" style="margin-bottom:12px">'+DIET.targets.slice(3).map(t=>`<div class="metric"><div class="mv">${t[0]}</div><div class="ml">${t[1]}</div></div>`).join('')+'</div>';
+ h+=`<div class="lead-line">${DIET.goal}</div>`;
+ h+='<div class="sec-t">Daily meal template</div>';
+ DIET.day.forEach(d=>{h+=`<div class="tcard"><h4>${d[0]}</h4><div class="note" style="margin:0">${d[1]}</div></div>`});
+ h+='<div class="sec-t">Mass-gainer smoothie</div><div class="tcard"><div class="note" style="margin:0">'+DIET.smoothie+'</div></div>';
+ h+='<div class="sec-t">Shopping list — buy &amp; cook at home</div>';
+ DIET.foods.forEach(g=>{h+=`<details><summary>${g[0]}<span class="c">${g.length-1}</span></summary><div class="dbody">`+g.slice(1).map(x=>`<span class="pill">${x}</span>`).join('')+'</div></details>'});
+ h+='<div class="sec-t">Snacks</div><div class="tcard">'+DIET.snacks.map(x=>`<span class="pill">${x}</span>`).join('')+'</div>';
+ h+='<div class="sec-t">Drinks</div><div class="tcard">'+DIET.drinks.map(x=>`<span class="pill">${x}</span>`).join('')+'</div>';
+ h+='<div class="sec-t">Weekly meal rotation</div><div class="tcard">'+DIET.meals.map(x=>`<div class="exrow"><span>${x}</span><span class="sr">batch</span></div>`).join('')+'</div>';
+ h+='<div class="sec-t">Hardgainer calorie tricks</div><div class="tcard">'+DIET.tricks.map(t=>`<div class="exrow"><span>${t}</span></div>`).join('')+'</div>';
+ h+='<div class="sec-t">Principles</div><div class="tcard">'+DIET.principles.map(p=>`<div class="exrow"><span>${p}</span></div>`).join('')+'</div>';
+ return h;
+}
+function planTrain(){
+ let h=`<div class="lead-line"><b>${WORKOUT.split}</b><br>${WORKOUT.schedule}</div>`;
+ WORKOUT.days.forEach(d=>{h+=`<div class="tcard"><h4>${d[0]}</h4>`+d[1].map(e=>`<div class="exrow"><span>${e[0]}</span><span class="sr">${e[1]}</span></div>`).join('')+'</div>'});
+ h+=`<div class="sec-t">Progression</div><div class="tcard"><div class="note" style="margin:0">${WORKOUT.progression}</div></div>`;
+ h+=`<div class="sec-t">Cardio</div><div class="tcard"><div class="note" style="margin:0">${WORKOUT.cardio}</div></div>`;
+ h+=`<p class="note">${WORKOUT.note}</p>`;
+ return h;
+}
+function planBooks(){
+ let h='<p class="note">The first 10 to read, in order — web-researched across AI business, wealth, health, psychology, marketing, sales &amp; philosophy.</p>';
+ BOOKS.forEach((b,i)=>{h+=`<div class="book"><div class="num">${i+1}</div><div><div class="bt">${b[0]}</div><div class="ba">${b[1]}</div><div class="bw">${b[3]}</div><span class="theme">${b[2]}</span></div></div>`});
+ return h;
+}
+
+render();
+</script>
+</body>
+</html>
