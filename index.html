@@ -107,6 +107,10 @@
   .pill{display:inline-block;background:var(--surface2);border-radius:7px;padding:6px 10px;font-size:12.5px;margin:0 5px 6px 0}
   .note{font-size:12.5px;color:var(--muted);line-height:1.6;margin:8px 2px}
   .lead-line{font-size:13px;line-height:1.6;background:#13201b;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+  .mrow{display:flex;gap:10px;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line);line-height:1.45}
+  .mrow:last-child{border-bottom:0}
+  .mrow .mt{color:var(--muted);width:62px;flex:none;font-size:10px;text-transform:uppercase;letter-spacing:.3px;padding-top:2px}
+  .mrow .mm{flex:1}
 </style>
 </head>
 <body>
@@ -432,10 +436,10 @@ const WORKOUT={
  ]
 };
 let planSub='habits';
-const PLAN_TABS=[['habits','Habits'],['diet','Diet'],['train','Train'],['books','Books']];
+const PLAN_TABS=[['habits','Habits'],['meals','Meals'],['diet','Diet'],['train','Train'],['books','Books']];
 function renderPlan(){
  document.getElementById('planNav').innerHTML=PLAN_TABS.map(t=>`<button class="${t[0]===planSub?'on':''}" onclick="setPlan('${t[0]}')">${t[1]}</button>`).join('');
- document.getElementById('planBody').innerHTML=planSub==='habits'?planHabits():planSub==='diet'?planDiet():planSub==='train'?planTrain():planBooks();
+ const R={habits:planHabits,meals:planMeals,diet:planDiet,train:planTrain,books:planBooks};document.getElementById('planBody').innerHTML=(R[planSub]||planHabits)();
 }
 function setPlan(s){planSub=s;renderPlan()}
 function planHabits(){
@@ -477,6 +481,92 @@ function planBooks(){
  BOOKS.forEach((b,i)=>{h+=`<div class="book"><div class="num">${i+1}</div><div><div class="bt">${b[0]}</div><div class="ba">${b[1]}</div><div class="bw">${b[3]}</div><span class="theme">${b[2]}</span></div></div>`});
  return h;
 }
+
+const WEEKS=[
+ {theme:'Week 1 — Tex-Mex & Bowls',days:[
+  ['Mon','Egg & potato scramble + PB toast','Classic gainer smoothie','Chicken burrito bowl','PB protein balls + banana','Beef & rice bowl + peppers'],
+  ['Tue','Oats in milk + banana + whey','Berry-protein smoothie','Chicken burrito bowl','Greek yogurt + granola + nuts','Beef & rice bowl + corn'],
+  ['Wed','Breakfast burrito (egg, beef, cheese)','Classic gainer smoothie','Beef & bean chili over rice','Cottage cheese + pineapple','Chicken tacos + avocado'],
+  ['Thu','Greek yogurt parfait + 3 boiled eggs','Chocolate-PB smoothie','Beef & bean chili over rice','Trail mix + apple','Chicken tacos + Spanish rice'],
+  ['Fri','Egg & potato scramble + PB toast','Classic gainer smoothie','Chicken & cheese quesadilla + beans','PB protein balls','Beef burrito bowl + guac'],
+  ['Sat','Bagel + eggs + avocado + cheese','Mango-green smoothie','Tuna salad wrap + chips','Cheese + crackers + apple','Beef & bean nacho bowl'],
+  ['Sun','Oat pancakes + eggs + berries','Classic gainer smoothie','Leftover beef & rice bowl','Greek yogurt + honey + nuts','Sheet-pan chicken + sweet potato']
+ ],grocery:[
+  ['Proteins & eggs',['18 eggs','3 lb chicken thighs','2.5 lb ground beef (85/15)','1 can tuna']],
+  ['Dairy',['2 gal whole milk','32 oz Greek yogurt','24 oz cottage cheese','2 lb shredded cheese','whey protein']],
+  ['Grains & carbs',['3 lb rice','1 lb oats','10 tortillas','4 bagels','1 loaf bread','tortilla chips']],
+  ['Beans & canned',['3 cans black beans','2 cans pinto beans','1 can corn','salsa','refried beans']],
+  ['Produce',['5 lb potatoes','2 sweet potatoes','3 avocados','2 bags spinach','5 bananas','3 bell peppers','2 onions','1 pineapple','6 apples','2 tomatoes','2 limes','berries']],
+  ['Pantry',['olive oil','peanut butter','granola','trail mix / nuts','dates','honey','chia','taco seasoning']]
+ ]},
+ {theme:'Week 2 — Mediterranean & Pasta',days:[
+  ['Mon','Oats in milk + banana + PB + whey','Berry-protein smoothie','Chicken, quinoa & roasted veg bowl','Cottage cheese + peaches','Baked salmon + sweet potato + broccoli'],
+  ['Tue','Greek yogurt parfait + 3 eggs','Classic gainer smoothie','Chicken, quinoa & roasted veg bowl','PB protein balls + apple','Spaghetti + beef tomato sauce + parmesan'],
+  ['Wed','Veggie & feta omelette + bagel','Mango-green smoothie','Salmon & rice bowl + avocado','Trail mix','Spaghetti + beef sauce (batch)'],
+  ['Thu','Oats + Greek yogurt + flax + banana','Classic gainer smoothie','Chicken pita + hummus + salad','Cheese + crackers + grapes','Chicken thighs + orzo + green beans'],
+  ['Fri','Egg & potato scramble + PB toast','Berry-protein smoothie','Tuna pasta salad','Greek yogurt + granola','Chicken thighs + orzo (batch) + salad'],
+  ['Sat','Bagel + eggs + avocado','Classic gainer smoothie','Chicken & rice bowl + tzatziki','PB protein balls','Beef & veggie pasta bake'],
+  ['Sun','Shakshuka (eggs in tomato) + bread','Mango-green smoothie','Leftover pasta bake','Cottage cheese + pineapple','Baked salmon + potatoes + asparagus']
+ ],grocery:[
+  ['Proteins & eggs',['18 eggs','3 lb chicken thighs','2 lb salmon fillets','1.5 lb ground beef','2 cans tuna']],
+  ['Dairy',['2 gal whole milk','32 oz Greek yogurt','24 oz cottage cheese','feta + parmesan','shredded mozzarella','whey protein']],
+  ['Grains & carbs',['2 lb spaghetti/pasta','1 box orzo','1 lb quinoa','1 lb oats','4 bagels','pita / bread','rice']],
+  ['Produce',['broccoli','green beans','asparagus','2 sweet potatoes','3 lb potatoes','2 avocados','spinach','5 bananas','grapes','peaches','onions','bell peppers','3 tomatoes','berries']],
+  ['Pantry & canned',['olive oil','marinara / crushed tomatoes','hummus','tzatziki','peanut butter','granola','nuts / trail mix','flax','honey']]
+ ]},
+ {theme:'Week 3 — Asian Stir-Fry',days:[
+  ['Mon','Oats in milk + banana + whey','Classic gainer smoothie','Teriyaki chicken + rice + veg','Edamame + 2 boiled eggs','Beef & broccoli + jasmine rice'],
+  ['Tue','Egg fried rice + extra eggs','Berry-protein smoothie','Teriyaki chicken + rice (batch)','PB protein balls + banana','Beef & broccoli (batch) + rice'],
+  ['Wed','Greek yogurt parfait + 3 eggs','Chocolate-PB smoothie','Chicken fried rice','Trail mix + apple','Tofu & veg stir-fry + peanut rice'],
+  ['Thu','Oats + PB + banana + whey','Classic gainer smoothie','Chicken fried rice (batch)','Cottage cheese + mango','Salmon teriyaki + rice + bok choy'],
+  ['Fri','Egg & potato scramble + toast','Mango-green smoothie','Beef & noodle stir-fry','Greek yogurt + granola + nuts','Chicken katsu + rice + slaw'],
+  ['Sat','Bagel + eggs + avocado','Classic gainer smoothie','Rice bowl + leftover beef','Cheese + crackers + apple','Chicken lo mein + veg'],
+  ['Sun','Oat pancakes + eggs + fruit','Berry-protein smoothie','Leftover stir-fry bowl','PB protein balls','Beef & pepper rice bowl']
+ ],grocery:[
+  ['Proteins & eggs',['24 eggs','3 lb chicken thighs/breast','2 lb flank or sirloin beef','1 lb salmon','1 block tofu','edamame']],
+  ['Dairy',['2 gal whole milk','32 oz Greek yogurt','cottage cheese','shredded cheese','whey protein']],
+  ['Grains & carbs',['4 lb jasmine rice','lo mein noodles','1 lb oats','4 bagels','panko (katsu)','bread']],
+  ['Produce',['broccoli','bok choy','snap peas','3 bell peppers','carrots','2 onions','garlic + ginger','spinach','5 bananas','frozen mango','apples','potatoes']],
+  ['Pantry & sauces',['soy sauce','teriyaki sauce','peanut butter','sesame oil','olive oil','rice vinegar','sriracha','granola','nuts','honey','cocoa powder']]
+ ]},
+ {theme:'Week 4 — Classic Comfort',days:[
+  ['Mon','Egg & potato scramble + PB toast','Classic gainer smoothie','Roast chicken + mashed potato + green beans','Greek yogurt + granola','Beef chili + cornbread'],
+  ['Tue','Oats in milk + banana + whey','Berry-protein smoothie','Chicken + rice + veg (from roast)','PB protein balls + apple','Beef chili + rice (batch)'],
+  ['Wed','Breakfast sandwich (egg, cheese, beef)','Classic gainer smoothie','Meatball sub + cheese','Cottage cheese + pineapple','Baked chicken thighs + pasta + veg'],
+  ['Thu','Greek yogurt parfait + 3 eggs','Chocolate-PB smoothie','Meatballs + pasta marinara','Trail mix','Baked chicken thighs (batch) + potato'],
+  ['Fri','Bagel + eggs + avocado','Classic gainer smoothie','Loaded baked potato + chili + cheese','PB protein balls','Burgers (85/15) + bun + sweet potato fries'],
+  ['Sat','Pancakes + eggs + berries','Mango-green smoothie','Leftover burger rice bowl','Cheese + crackers + apple','Spaghetti & meatballs + parmesan'],
+  ['Sun','Big scramble (egg, beef, cheese, potato)','Classic gainer smoothie','Leftover spaghetti','Greek yogurt + honey + nuts','Sheet-pan sausage + peppers + potatoes']
+ ],grocery:[
+  ['Proteins & eggs',['24 eggs','1 whole chicken or 3 lb thighs','3 lb ground beef (85/15)','1 lb sausage','meatballs (frozen or make)']],
+  ['Dairy',['2 gal whole milk','32 oz Greek yogurt','cottage cheese','2 lb shredded cheese','parmesan','whey protein']],
+  ['Grains & carbs',['3 lb rice','2 lb spaghetti/pasta','1 lb oats','burger buns','sub rolls','4 bagels','cornbread mix']],
+  ['Beans & canned',['3 cans kidney/pinto beans','crushed tomatoes','marinara','1 can corn']],
+  ['Produce',['5 lb potatoes','3 sweet potatoes','green beans','3 bell peppers','2 onions','2 avocados','5 bananas','berries','6 apples','1 pineapple','spinach']],
+  ['Pantry',['olive oil','peanut butter','granola','nuts / trail mix','honey','cocoa powder','chili seasoning','ketchup / mustard']]
+ ]}
+];
+let mealWeek=null;
+function curWeekIdx(){return ((weekNo()-1)%4+4)%4}
+function planMeals(){
+ if(mealWeek===null)mealWeek=curWeekIdx();
+ const cw=curWeekIdx();
+ let h='<div class="subnav" style="margin-bottom:12px">'+WEEKS.map((w,i)=>`<button class="${i===mealWeek?'on':''}" onclick="setMealWeek(${i})">W${i+1}</button>`).join('')+'</div>';
+ const W=WEEKS[mealWeek];
+ h+=`<div class="lead-line"><b>${W.theme}</b>${mealWeek===cw?' &nbsp;·&nbsp; <span style="color:var(--accent)">this week</span>':''}<br>Rotates every 4 weeks · same macros (~3,300 cal · ~155g protein) every day. Tap W1–W4 to switch.</div>`;
+ const types=['Breakfast','Smoothie','Lunch','Snack','Dinner'];
+ W.days.forEach(d=>{
+  h+=`<div class="tcard"><h4>${d[0]}</h4>`;
+  for(let i=1;i<=5;i++){h+=`<div class="mrow"><span class="mt">${types[i-1]}</span><span class="mm">${d[i]}</span></div>`}
+  h+='</div>';
+ });
+ h+='<div class="sec-t">🛒 Grocery list — Week '+(mealWeek+1)+'</div>';
+ W.grocery.forEach((g,i)=>{h+=`<details ${i===0?'open':''}><summary>${g[0]}<span class="c">${g[1].length}</span></summary><div class="dbody">`+g[1].map(x=>`<span class="pill">${x}</span>`).join('')+'</div></details>'});
+ h+=`<button class="btn ghost" style="margin-top:8px" onclick="copyGrocery(${mealWeek},this)">Copy grocery list</button>`;
+ return h;
+}
+function setMealWeek(i){mealWeek=i;renderPlan()}
+function copyGrocery(wi,btn){const W=WEEKS[wi];const txt=W.theme+' — grocery list\n\n'+W.grocery.map(g=>g[0]+':\n'+g[1].map(x=>'  - '+x).join('\n')).join('\n\n');try{navigator.clipboard.writeText(txt)}catch(e){}if(btn)btn.textContent='Copied ✓'}
 
 render();
 </script>
