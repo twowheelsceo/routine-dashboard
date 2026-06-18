@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JERRY PRO — Two Wheel Deals</title>
+<meta name="theme-color" content="#0e1116">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="JERRY">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<style>
+  :root{--bg:#0e1116;--surface:#171b22;--surface2:#1e242d;--line:#262d38;--txt:#e6e9ef;--muted:#8b94a3;--accent:#5dcaa5;--amber:#ef9f27}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  .wrap{max-width:540px;margin:0 auto;padding:34px 18px 60px}
+  .logo{width:66px;height:66px;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+  .logo svg{width:66px;height:66px}
+  h1{text-align:center;font-size:26px;font-weight:700;letter-spacing:1.5px}
+  .tag{text-align:center;color:var(--muted);font-size:13px;margin:4px 0 26px}
+  .sec{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;margin:22px 4px 10px}
+  .tile{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:11px;text-decoration:none;color:var(--txt);transition:.15s}
+  .tile:hover{border-color:#3a4656;background:var(--surface2)}
+  .tile.hero{border-color:var(--accent);background:#13201b}
+  .tile .ic{font-size:25px;width:38px;text-align:center;flex:none}
+  .tile .body{flex:1}
+  .tile .t{font-weight:600;font-size:16px}
+  .tile .s{color:var(--muted);font-size:12.5px;margin-top:2px;line-height:1.4}
+  .tile .arw{color:var(--muted);font-size:20px}
+  .badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-align:2px}
+  .b-on{background:rgba(93,202,165,.16);color:var(--accent)}
+  .b-air{background:rgba(239,159,39,.16);color:var(--amber)}
+  .note{color:var(--muted);font-size:12px;line-height:1.7;text-align:center;margin-top:26px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="115" fill="#12161c"/><path d="M148 268 l72 72 l146 -168" fill="none" stroke="#5dcaa5" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <h1>JERRY PRO</h1>
+  <div class="tag">Two Wheel Deals · command center</div>
+
+  <div class="sec">Always on — works anywhere, even with both Macs off</div>
+  <a class="tile hero" href="https://twowheelsceo.github.io/routine-dashboard/" target="_blank" rel="noopener">
+    <div class="ic">📋</div><div class="body"><div class="t">Routine Dashboard <span class="badge b-on">live</span></div><div class="s">Habits · meals · training · books · arena · cloud-synced</div></div><div class="arw">›</div>
+  </a>
+
+  <div class="sec">On the Air — home wifi or Tailscale</div>
+  <a class="tile" href="http://aidans-macbook-air.local:8080" target="_blank" rel="noopener">
+    <div class="ic">🏠</div><div class="body"><div class="t">Routine (live Flask app) <span class="badge b-air">needs Air</span></div><div class="s">Mac 1's Arena + academics + photos · :8080</div></div><div class="arw">›</div>
+  </a>
+  <a class="tile" href="http://aidans-macbook-air.local:5001" target="_blank" rel="noopener">
+    <div class="ic">🏍️</div><div class="body"><div class="t">Business — deal scanner <span class="badge b-air">needs Air</span></div><div class="s">Two Wheels scanner + selling dashboard · :5001</div></div><div class="arw">›</div>
+  </a>
+
+  <div class="sec">Vault</div>
+  <a class="tile" href="https://github.com/twowheelsceo/routine-dashboard" target="_blank" rel="noopener">
+    <div class="ic">🧠</div><div class="body"><div class="t">The brain (GitHub)</div><div class="s">Plans, habits, meals, training, books — source of truth</div></div><div class="arw">›</div>
+  </a>
+
+  <div class="note">Add to Home Screen — this is the one bookmark.<br><span style="color:var(--accent)">Green</span> works anywhere · <span style="color:var(--amber)">amber</span> only when the Air is on + you're on wifi/Tailscale.</div>
+</div>
+</body>
+</html>
