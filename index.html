@@ -138,6 +138,7 @@
   </div>
 
   <div id="t-log" class="hide">
+    <div id="syncBox"></div>
     <div class="sec-t">Log tonight</div>
     <div class="card">
       <div class="row"><label class="fld" style="flex:1"><span>Calories</span><input id="i-cal" type="number" inputmode="numeric"></label><label class="fld" style="flex:1"><span>Protein (g)</span><input id="i-protein" type="number" inputmode="numeric"></label></div>
@@ -219,11 +220,18 @@ const QUESTS=[
 ];
 const DEF_T={protein:155,sleep:8.5,cal:3300,water:120};
 let S=load(), cur=S.cur||'Aidan', tab='today';
+const SUPA_URL='https://ctgovhqagvwzkizphcem.supabase.co';
+const SUPA_KEY='sb_publishable_Yl6cOiM9DbwFzDdqNphf3A_DuYFveox';
+const SUPA_H={apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+let syncCode=localStorage.getItem('rd_sync')||'', syncStatus='', pulling=false, pushT=null;
+function syncOn(){return !!(SUPA_URL&&SUPA_KEY&&syncCode)}
 
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.players)return d}catch(e){}
   const o={cur:'Aidan',stakes:'Loser runs the next bike pickup solo.',players:{}};
   PLAYERS.forEach(p=>o.players[p]={days:{},targets:{...DEF_T}});return o}
-function save(){localStorage.setItem(KEY,JSON.stringify(S))}
+function saveLocal(){localStorage.setItem(KEY,JSON.stringify(S))}
+function save(){saveLocal();schedulePush()}
+function schedulePush(){if(!syncOn())return;clearTimeout(pushT);pushT=setTimeout(cloudPush,800)}
 function P(){return S.players[cur]}
 function day(d){d=d||TODAY();if(!P().days[d])P().days[d]={m:{},q:{},sets:[]};return P().days[d]}
 function T(){return Object.assign({},DEF_T,P().targets||{})}
@@ -246,7 +254,7 @@ function render(){
   document.getElementById('date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   // player switch
   document.getElementById('pswitch').innerHTML=PLAYERS.map(p=>`<button class="${p===cur?'on':''}" onclick="setP('${p}')">${p}</button>`).join('');
-  renderToday();renderLog();renderWorkout();renderHistory();renderCharts();renderArena();renderPlan();renderNav();
+  renderToday();renderLog();renderWorkout();renderHistory();renderCharts();renderArena();renderPlan();renderSync();renderNav();
 }
 function renderNav(){
   const tabs=[['today','','☀','Today'],['plan','','📋','Plan'],['log','','✎','Log'],['workout','','🏋','Lift'],['history','','▤','History'],['charts','','📈','Charts'],['arena','','🏆','Arena']];
@@ -254,7 +262,7 @@ function renderNav(){
   ['today','plan','log','workout','history','charts','arena'].forEach(t=>document.getElementById('t-'+t).classList.toggle('hide',t!==tab));
 }
 function go(t){tab=t;render()}
-function setP(p){cur=p;S.cur=p;save();render()}
+function setP(p){cur=p;S.cur=p;save();render();if(syncOn())cloudPull(true)}
 
 function renderToday(){
   // focus banner = first undone quest today
@@ -576,7 +584,51 @@ function planMeals(){
 function setMealWeek(i){mealWeek=i;renderPlan()}
 function copyGrocery(wi,btn){const W=WEEKS[wi];const txt=W.theme+' — grocery list\n\n'+W.grocery.map(g=>g[0]+':\n'+g[1].map(x=>'  - '+x).join('\n')).join('\n\n');try{navigator.clipboard.writeText(txt)}catch(e){}if(btn)btn.textContent='Copied ✓'}
 
+/* ===== cloud sync (Supabase) ===== */
+function setSync(s){syncStatus=s;const el=document.getElementById('syncStatus');if(el)el.textContent=s;}
+async function cloudPush(){
+ if(!syncOn())return;
+ const now=new Date().toISOString();
+ const rows=[{code:syncCode,player:cur,data:P(),updated_at:now},{code:syncCode,player:'__meta',data:{stakes:S.stakes},updated_at:now}];
+ try{
+  const r=await fetch(SUPA_URL+'/rest/v1/rd_state?on_conflict=code,player',{method:'POST',headers:Object.assign({},SUPA_H,{Prefer:'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(rows)});
+  setSync(r.ok?'Synced ✓':'Sync error');
+ }catch(e){setSync('Offline — will retry');}
+}
+async function cloudPull(all){
+ if(!syncOn()||pulling)return;
+ pulling=true;
+ try{
+  const r=await fetch(SUPA_URL+'/rest/v1/rd_state?code=eq.'+encodeURIComponent(syncCode)+'&select=player,data',{headers:SUPA_H});
+  if(r.ok){
+   const rows=await r.json();let changed=false;
+   rows.forEach(row=>{
+    if(row.player==='__meta'){if(row.data&&row.data.stakes!==undefined&&row.data.stakes!==S.stakes){S.stakes=row.data.stakes;changed=true;}return;}
+    if(!PLAYERS.includes(row.player))return;
+    if(!all&&row.player===cur)return;
+    if(JSON.stringify(S.players[row.player])!==JSON.stringify(row.data)){S.players[row.player]=row.data;changed=true;}
+   });
+   if(changed){saveLocal();render();}
+   setSync('Synced ✓');
+  }else setSync('Sync error');
+ }catch(e){setSync('Offline');}
+ pulling=false;
+}
+function syncConnect(code){code=(code||'').trim();if(!code)return;syncCode=code;localStorage.setItem('rd_sync',code);setSync('Connecting…');cloudPush();cloudPull(true);renderSync();}
+function syncCreate(){syncConnect('tw-'+Math.random().toString(36).slice(2,8));}
+function syncDisconnect(){syncCode='';localStorage.removeItem('rd_sync');setSync('');renderSync();}
+function renderSync(){
+ const el=document.getElementById('syncBox');if(!el)return;
+ if(syncOn()){
+  el.innerHTML='<div class="card" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><div style="font-weight:600;font-size:14px">☁ Cloud sync on</div><div class="mini" id="syncStatus" style="margin-top:2px">'+(syncStatus||'Synced ✓')+'</div></div><button class="btn ghost sm" onclick="syncDisconnect()">Disconnect</button></div><div style="margin-top:10px"><div class="mini">Your sync code — enter this on your phone &amp; other Mac:</div><div style="display:flex;gap:8px;margin-top:5px"><input id="syncCodeView" readonly value="'+syncCode+'" style="font-weight:600;letter-spacing:.5px"><button class="btn ghost sm" onclick="navigator.clipboard&&navigator.clipboard.writeText(syncCode);this.textContent=\'Copied\'">Copy</button></div></div></div>';
+ }else{
+  el.innerHTML='<div class="card" style="margin-bottom:14px"><div style="font-weight:600;font-size:14px">☁ Cloud sync</div><div class="mini" style="margin:4px 0 10px">Sync your data across phone + both Macs. Create a code on one device, then enter the same code everywhere.</div><button class="btn" onclick="syncCreate()">Create sync code</button><div style="display:flex;gap:8px;margin-top:8px"><input id="syncCodeIn" placeholder="or enter existing code"><button class="btn ghost sm" onclick="syncConnect(document.getElementById(\'syncCodeIn\').value)">Connect</button></div></div>';
+ }
+}
+
 render();
+if(syncOn())cloudPull(true);
+setInterval(function(){cloudPull(false)},8000);
 </script>
 </body>
 </html>
