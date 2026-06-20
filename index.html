@@ -131,6 +131,8 @@
   <div id="t-today">
     <div class="banner"><div class="dot"></div><div><b id="focusTask">All quests done</b><br><span id="focusSub">Nice — you're clear for today</span></div></div>
     <div class="grid g4" id="streaks"></div>
+    <div id="nnBanner"></div>
+    <details style="margin-bottom:14px"><summary>📅 Turn on phone reminders<span class="c">one-time</span></summary><div class="dbody"><div class="mini" style="line-height:1.7">Subscribe once → your daily routine fires as phone alarms even with the app closed.<br><b>iPhone:</b> tap the button → Subscribe. <b>Android:</b> Google Calendar → + → "From URL" → paste the link.</div><a class="btn" style="display:block;text-align:center;margin-top:10px;text-decoration:none" href="webcal://twowheelsceo.github.io/routine-dashboard/routine.ics">＋ Add the routine calendar</a><div class="mini" style="margin-top:7px;word-break:break-all">Link: https://twowheelsceo.github.io/routine-dashboard/routine.ics</div></div></details>
     <div class="sec-t">Today's targets</div>
     <div id="bars"></div>
     <div class="sec-t">Daily quests</div>
@@ -208,16 +210,18 @@ const KEY='rd_v1';
 const PLAYERS=['Aidan','Dante'];
 const QUESTS=[
   {id:'plan',label:'Write top-3 if-then plan',pts:10},
-  {id:'workout',label:'Train (per program)',pts:15},
-  {id:'protein',label:'Hit protein target',pts:10,auto:'protein'},
+  {id:'workout',label:'Train (per program)',pts:15,nn:1},
+  {id:'protein',label:'Hit protein target',pts:10,auto:'protein',nn:1},
   {id:'cal',label:'Hit calorie target',pts:10,auto:'cal'},
   {id:'meditate',label:'10-min meditation',pts:5},
-  {id:'focus',label:'Phone-down deep-work block',pts:10},
-  {id:'study',label:'Study / skill block (business)',pts:10},
+  {id:'focus',label:'Phone-down deep-work block',pts:10,nn:1},
+  {id:'study',label:'Study / skill block (business)',pts:10,nn:1},
   {id:'homecook',label:'Ate every meal at home',pts:10},
   {id:'sleep',label:'Sleep ≥ 8h',pts:10,auto:'sleep'},
-  {id:'review',label:'Evening review + journal',pts:5}
+  {id:'review',label:'Evening review + journal',pts:5,nn:1}
 ];
+const NONNEG=QUESTS.filter(q=>q.nn).map(q=>q.id);
+const DEF_CUES={plan:'After coffee → write my top-3',workout:'After coffee → train',focus:'When I sit at my desk → phone in another room',study:'After dinner → 30-min study block',review:'Before bed → log the day'};
 const DEF_T={protein:155,sleep:8.5,cal:3300,water:120};
 let S=load(), cur=S.cur||'Aidan', tab='today';
 const SUPA_URL='https://ctgovhqagvwzkizphcem.supabase.co';
@@ -226,9 +230,11 @@ const SUPA_H={apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'a
 let syncCode=localStorage.getItem('rd_sync')||'', syncStatus='', pulling=false, pushT=null;
 function syncOn(){return !!(SUPA_URL&&SUPA_KEY&&syncCode)}
 
-function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.players)return d}catch(e){}
-  const o={cur:'Aidan',stakes:'Loser runs the next bike pickup solo.',players:{}};
-  PLAYERS.forEach(p=>o.players[p]={days:{},targets:{...DEF_T}});return o}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.players)return migrate(d)}catch(e){}
+  const o={cur:'Aidan',stakes:'Loser runs the next bike pickup solo.',stake:5,cues:{...DEF_CUES},players:{}};
+  PLAYERS.forEach(p=>o.players[p]={days:{},targets:{...DEF_T},freezes:2,owed:0});return migrate(o)}
+function migrate(o){if(o.stake===undefined)o.stake=5;if(!o.cues)o.cues={...DEF_CUES};
+  PLAYERS.forEach(p=>{if(!o.players[p])o.players[p]={days:{},targets:{...DEF_T}};if(o.players[p].freezes===undefined)o.players[p].freezes=2;if(o.players[p].owed===undefined)o.players[p].owed=0;});return o}
 function saveLocal(){localStorage.setItem(KEY,JSON.stringify(S))}
 function save(){saveLocal();schedulePush()}
 function schedulePush(){if(!syncOn())return;clearTimeout(pushT);pushT=setTimeout(cloudPush,800)}
@@ -236,6 +242,14 @@ function P(){return S.players[cur]}
 function day(d){d=d||TODAY();if(!P().days[d])P().days[d]={m:{},q:{},sets:[]};return P().days[d]}
 function T(){return Object.assign({},DEF_T,P().targets||{})}
 function round(n){return Math.round((n+Number.EPSILON)*10)/10}
+function reconcile(){const mo=TODAY().slice(0,7);if(P()._fm!==mo){P()._fm=mo;P().freezes=2;}
+  const today=TODAY(),cut=lastNdays(8)[0];let changed=false;
+  Object.keys(P().days).forEach(d=>{if(d>=today||d<cut)return;const dd=P().days[d];if(dd.settled)return;
+    const missed=NONNEG.some(qid=>!questDone(d,QUESTS.find(x=>x.id===qid)));
+    if(missed){if((P().freezes||0)>0){P().freezes--;dd.frozen=true;}else{P().owed=(+P().owed||0)+(+S.stake||5);dd.penalized=true;}}
+    dd.settled=true;changed=true;});
+  if(changed)save();}
+function settleUp(){if(!confirm('Mark your debt paid and reset YOUR tally to $0?'))return;P().owed=0;save();render();}
 
 function lastNdays(n){const a=[],t=new Date(TODAY());for(let i=n-1;i>=0;i--){const d=new Date(t);d.setDate(d.getDate()-i);a.push(d.toISOString().slice(0,10))}return a}
 function autoQuestDone(d,q){const day_=P().days[d];if(!day_)return false;if(q.auto){const v=+day_.m[q.auto];const tg=T()[q.auto];return v>=tg&&v>0}return !!day_.q[q.id]}
@@ -265,6 +279,7 @@ function go(t){tab=t;render()}
 function setP(p){cur=p;S.cur=p;save();render();if(syncOn())cloudPull(true)}
 
 function renderToday(){
+  reconcile();
   // focus banner = first undone quest today
   const undone=QUESTS.find(q=>!questDone(TODAY(),q));
   document.getElementById('focusTask').textContent=undone?undone.label:'All quests done';
@@ -278,12 +293,15 @@ function renderToday(){
     ['Home meals',streak(d=>questDone(d,{id:'homecook'}))]
   ];
   document.getElementById('streaks').innerHTML=sd.map(([l,n])=>`<div class="card streak ${n>0?'live':'dead'}"><div class="n">${n}</div><div class="l">${l}</div><div class="fire">${n>0?'🔥 on':'— start it'}</div></div>`).join('');
+  // non-negotiables / on the line
+  const nnDone=NONNEG.filter(qid=>questDone(TODAY(),QUESTS.find(x=>x.id===qid))).length, allNN=nnDone===NONNEG.length, rivalT=PLAYERS.find(p=>p!==cur);
+  document.getElementById('nnBanner').innerHTML=`<div class="card" style="border-left:3px solid ${allNN?'var(--accent)':'var(--amber)'};margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div style="font-weight:600">🔒 Non-negotiables · ${nnDone}/${NONNEG.length}</div><div class="mini">${allNN?'✓ safe today':'$'+(+S.stake||5)+' on the line'}</div></div><div class="mini" style="margin-top:5px">${allNN?"All done — no stake owed today. 🔥":`Finish all ${NONNEG.length} before midnight or you owe <b style="color:var(--amber)">${rivalT} $${+S.stake||5}</b>.`}</div></div>`;
   // bars
   const m=day().m;
   const bars=[['Calories',+m.cal||0,t.cal,'var(--accent2)'],['Protein',+m.protein||0,t.protein,'var(--accent)'],['Water',+m.water||0,t.water,'var(--accent2)'],['Sleep',+m.sleep||0,t.sleep,'var(--green)']];
   document.getElementById('bars').innerHTML=bars.map(([l,v,tg,c])=>{const pct=Math.min(100,Math.round(v/tg*100))||0;return `<div class="bar"><div class="top"><span>${l}</span><span class="v">${round(v)} / ${tg}</span></div><div class="track"><div class="fill" style="width:${pct}%;background:${c}"></div></div></div>`}).join('');
   // quests
-  document.getElementById('quests').innerHTML=QUESTS.map(q=>{const done=questDone(TODAY(),q);const isNow=!done&&undone&&undone.id===q.id;return `<div class="quest ${done?'done':''} ${isNow?'now':''}" onclick="toggleQ('${q.id}')"><div class="box">${done?'✓':''}</div><div class="lab">${q.label}</div>${isNow?'<span class="nowtag">now</span>':`<span class="pts">+${q.pts}</span>`}</div>`}).join('');
+  document.getElementById('quests').innerHTML=QUESTS.map(q=>{const done=questDone(TODAY(),q);const isNow=!done&&undone&&undone.id===q.id;const cue=S.cues&&S.cues[q.id];return `<div class="quest ${done?'done':''} ${isNow?'now':''}" onclick="toggleQ('${q.id}')"><div class="box">${done?'✓':''}</div><div class="lab">${q.nn?'🔒 ':''}${q.label}${cue?`<div class="mini" style="margin-top:2px;opacity:.8">↪ ${cue}</div>`:''}</div>${isNow?'<span class="nowtag">now</span>':`<span class="pts">+${q.pts}</span>`}</div>`}).join('');
 }
 function day_m(d,k){const dd=P().days[d];return dd&&dd.m[k]?dd.m[k]:0}
 function toggleQ(id){const d=day();d.q[id]=!questDone(TODAY(),QUESTS.find(q=>q.id===id));save();renderToday();renderArena()}
@@ -333,7 +351,8 @@ function renderArena(){
   document.getElementById('arenaPlayers').innerHTML=scores.map(s=>`<div class="arena-p ${s.wk===lead&&lead>0?'lead':''}"><div class="lvl" style="background:${s.p===cur?'var(--accent)':'var(--surface2)'};color:${s.p===cur?'#04342c':'var(--txt)'}">${s.lvl}</div><div><div class="nm">${s.p}${s.wk===lead&&lead>0?' 👑':''}</div><div class="sub">level ${s.lvl} · ${s.all} pts all-time</div></div><div class="pts"><b>${s.wk}</b><div class="sub">this week</div></div></div>`).join('');
   document.getElementById('coLvl').textContent=Math.floor(scores.reduce((a,s)=>a+s.all,0)/250)+1;
   document.getElementById('weekNo').textContent=weekNo();
-  document.getElementById('stakesView').textContent=S.stakes||'No stakes set — add one in Log → settings.';
+  const ao=+(S.players.Aidan.owed||0), dno=+(S.players.Dante.owed||0);
+  document.getElementById('stakesView').innerHTML=`<div style="font-size:14px;margin-bottom:7px">${S.stakes||'No stake set.'}</div><div class="mini">Miss a 🔒 non-negotiable day → you owe your rival <b>$${+S.stake||5}</b> automatically (deadline midnight). 2 streak-freezes/month soften the first slips.</div><div class="exrow" style="margin-top:9px"><span>Aidan owes</span><span class="sr" style="color:${ao>0?'var(--amber)':'var(--muted)'}">$${ao}</span></div><div class="exrow"><span>Dante owes</span><span class="sr" style="color:${dno>0?'var(--amber)':'var(--muted)'}">$${dno}</span></div><div class="exrow"><span>Your freezes left</span><span class="sr">${(P().freezes??2)} ❄️</span></div><button class="btn ghost sm" style="margin-top:11px" onclick="settleUp()">I paid up — reset my tally</button>`;
 }
 
 /* ===== PLAN: habits · diet · training · books ===== */
@@ -589,7 +608,7 @@ function setSync(s){syncStatus=s;const el=document.getElementById('syncStatus');
 async function cloudPush(){
  if(!syncOn())return;
  const now=new Date().toISOString();
- const rows=[{code:syncCode,player:cur,data:P(),updated_at:now},{code:syncCode,player:'__meta',data:{stakes:S.stakes},updated_at:now}];
+ const rows=[{code:syncCode,player:cur,data:P(),updated_at:now},{code:syncCode,player:'__meta',data:{stakes:S.stakes,stake:S.stake,cues:S.cues},updated_at:now}];
  try{
   const r=await fetch(SUPA_URL+'/rest/v1/rd_state?on_conflict=code,player',{method:'POST',headers:Object.assign({},SUPA_H,{Prefer:'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(rows)});
   setSync(r.ok?'Synced ✓':'Sync error');
@@ -603,7 +622,7 @@ async function cloudPull(all){
   if(r.ok){
    const rows=await r.json();let changed=false;
    rows.forEach(row=>{
-    if(row.player==='__meta'){if(row.data&&row.data.stakes!==undefined&&row.data.stakes!==S.stakes){S.stakes=row.data.stakes;changed=true;}return;}
+    if(row.player==='__meta'){if(row.data){['stakes','stake','cues'].forEach(k=>{if(row.data[k]!==undefined&&JSON.stringify(row.data[k])!==JSON.stringify(S[k])){S[k]=row.data[k];changed=true;}});}return;}
     if(!PLAYERS.includes(row.player))return;
     if(!all&&row.player===cur)return;
     if(JSON.stringify(S.players[row.player])!==JSON.stringify(row.data)){S.players[row.player]=row.data;changed=true;}

@@ -1,0 +1,114 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Two Wheel Deals//Routine//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Routine — Two Wheel Deals
+X-WR-CALDESC:Your daily operating rhythm. Alarms fire on your phone even with the app closed.
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:rd-wake@twowheelsceo
+DTSTART:20260101T063000
+DURATION:PT30M
+RRULE:FREQ=DAILY
+SUMMARY:Wake · make bed · write today's if-then top-3
+DESCRIPTION:Alarm across the room. Bed made before you touch your phone. Write your 3 if-then plans.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT0S
+DESCRIPTION:Wake + plan the day
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:rd-train@twowheelsceo
+DTSTART:20260101T070000
+DURATION:PT60M
+RRULE:FREQ=DAILY
+SUMMARY:Train (after coffee -> lift)
+DESCRIPTION:If-then cue: after I brew coffee, I train. Log every set in the dashboard.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT5M
+DESCRIPTION:Train in 5 — get changed
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:rd-breakfast@twowheelsceo
+DTSTART:20260101T083000
+DURATION:PT30M
+RRULE:FREQ=DAILY
+SUMMARY:Breakfast — protein (start the 155g)
+DESCRIPTION:Protein anchor on the plate. Smoothie counts.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT0S
+DESCRIPTION:Eat — hit protein
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:rd-deepwork@twowheelsceo
+DTSTART:20260101T093000
+DURATION:PT90M
+RRULE:FREQ=DAILY
+SUMMARY:Deep-work block — phone in another room
+DESCRIPTION:If-then cue: when I sit at my desk, phone goes in another room and I open the scanner. Single-task.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT5M
+DESCRIPTION:Deep work in 5 — phone away
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:rd-lunch@twowheelsceo
+DTSTART:20260101T123000
+DURATION:PT45M
+RRULE:FREQ=DAILY
+SUMMARY:Lunch — protein + scanner check / send offers
+DESCRIPTION:Eat, then message 5 sellers.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT0S
+DESCRIPTION:Lunch + outreach
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:rd-study@twowheelsceo
+DTSTART:20260101T180000
+DURATION:PT45M
+RRULE:FREQ=DAILY
+SUMMARY:Study / skill block (market · SAT · FIU)
+DESCRIPTION:30-45 min deliberate practice. Non-negotiable.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT5M
+DESCRIPTION:Study block in 5
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:rd-review@twowheelsceo
+DTSTART:20260101T210000
+DURATION:PT15M
+RRULE:FREQ=DAILY
+SUMMARY:Log the day + evening review
+DESCRIPTION:Open the dashboard, check off your non-negotiables, log weight/protein/sleep. Finish before midnight or you owe your rival the stake.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT0S
+DESCRIPTION:Log the day NOW — deadline is midnight
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:rd-winddown@twowheelsceo
+DTSTART:20260101T223000
+DURATION:PT30M
+RRULE:FREQ=DAILY
+SUMMARY:Wind-down · phone out of room · lights by 23:00
+DESCRIPTION:Screens down. Protect the 8 hours.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT0S
+DESCRIPTION:Wind down — phone out of the room
+END:VALARM
+END:VEVENT
+END:VCALENDAR
