@@ -6,6 +6,7 @@ Personal operating system for **Aidan & Dante**. Lives in the routine dashboard 
 - [[HABITS]] — the 40 evidence-based habits + the 3 laws
 - [[DIET]] — lean-muscle diet plan, foods, targets (eat every meal at home)
 - [[MEALS]] — rotating 4-week meal plan + weekly grocery lists
+- [[ACCOUNTABILITY]] — reminders + consequences engine (stakes, streak-freezes, if-then cues, phone calendar)
 - [[WORKOUT]] — 4-day Upper/Lower training split
 - [[BOOKS]] — the first 10 books to read
 
