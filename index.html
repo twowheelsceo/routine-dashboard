@@ -601,7 +601,10 @@ function planMeals(){
  return h;
 }
 function setMealWeek(i){mealWeek=i;renderPlan()}
-function copyGrocery(wi,btn){const W=WEEKS[wi];const txt=W.theme+' — grocery list\n\n'+W.grocery.map(g=>g[0]+':\n'+g[1].map(x=>'  - '+x).join('\n')).join('\n\n');try{navigator.clipboard.writeText(txt)}catch(e){}if(btn)btn.textContent='Copied ✓'}
+function fallbackCopy(text){try{const ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.top='-9999px';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,text.length);const ok=document.execCommand('copy');document.body.removeChild(ta);return ok}catch(e){return false}}
+function copyText(text){try{if(navigator.clipboard&&navigator.clipboard.writeText){return navigator.clipboard.writeText(text).then(()=>true).catch(()=>fallbackCopy(text))}}catch(e){}return Promise.resolve(fallbackCopy(text))}
+function copyBtn(text,btn){const orig=btn?btn.textContent:'';copyText(text).then(ok=>{if(!btn)return;btn.textContent=ok?'Copied ✓':'Copy failed — select & copy';setTimeout(()=>{btn.textContent=orig},2000)})}
+function copyGrocery(wi,btn){const W=WEEKS[wi];const txt=W.theme+' — grocery list\n\n'+W.grocery.map(g=>g[0]+':\n'+g[1].map(x=>'  - '+x).join('\n')).join('\n\n');copyBtn(txt,btn)}
 
 /* ===== cloud sync (Supabase) ===== */
 function setSync(s){syncStatus=s;const el=document.getElementById('syncStatus');if(el)el.textContent=s;}
@@ -639,7 +642,7 @@ function syncDisconnect(){syncCode='';localStorage.removeItem('rd_sync');setSync
 function renderSync(){
  const el=document.getElementById('syncBox');if(!el)return;
  if(syncOn()){
-  el.innerHTML='<div class="card" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><div style="font-weight:600;font-size:14px">☁ Cloud sync on</div><div class="mini" id="syncStatus" style="margin-top:2px">'+(syncStatus||'Synced ✓')+'</div></div><button class="btn ghost sm" onclick="syncDisconnect()">Disconnect</button></div><div style="margin-top:10px"><div class="mini">Your sync code — enter this on your phone &amp; other Mac:</div><div style="display:flex;gap:8px;margin-top:5px"><input id="syncCodeView" readonly value="'+syncCode+'" style="font-weight:600;letter-spacing:.5px"><button class="btn ghost sm" onclick="navigator.clipboard&&navigator.clipboard.writeText(syncCode);this.textContent=\'Copied\'">Copy</button></div></div></div>';
+  el.innerHTML='<div class="card" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><div style="font-weight:600;font-size:14px">☁ Cloud sync on</div><div class="mini" id="syncStatus" style="margin-top:2px">'+(syncStatus||'Synced ✓')+'</div></div><button class="btn ghost sm" onclick="syncDisconnect()">Disconnect</button></div><div style="margin-top:10px"><div class="mini">Your sync code — enter this on your phone &amp; other Mac:</div><div style="display:flex;gap:8px;margin-top:5px"><input id="syncCodeView" readonly value="'+syncCode+'" style="font-weight:600;letter-spacing:.5px"><button class="btn ghost sm" onclick="copyBtn(syncCode,this)">Copy</button></div></div></div>';
  }else{
   el.innerHTML='<div class="card" style="margin-bottom:14px"><div style="font-weight:600;font-size:14px">☁ Cloud sync</div><div class="mini" style="margin:4px 0 10px">Sync your data across phone + both Macs. Create a code on one device, then enter the same code everywhere.</div><button class="btn" onclick="syncCreate()">Create sync code</button><div style="display:flex;gap:8px;margin-top:8px"><input id="syncCodeIn" placeholder="or enter existing code"><button class="btn ghost sm" onclick="syncConnect(document.getElementById(\'syncCodeIn\').value)">Connect</button></div></div>';
  }
