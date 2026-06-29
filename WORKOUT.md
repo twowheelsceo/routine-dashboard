@@ -1,56 +1,56 @@
-# Workout — 4-Day Upper/Lower (lean muscle)
+# Workout — Concurrent Combat + Strength
 
-For a tall, lean ex-track athlete maximizing muscle while staying lean. Every muscle trained 2× a week — the proven sweet spot for hypertrophy.
+Combat training is now the engine. Lifting drops from 4 days to **3 days of strength** so it adds power and muscle without wrecking recovery for the mats. See COMBAT.md for the gym + sign-up plan.
 
-**Schedule:** Mon Upper A · Tue Lower A · Thu Upper B · Fri Lower B. (Wednesday + weekend off.)
+**Week:** Mon Lift–Legs · Tue Muay Thai · Wed Lift–Push/Pull · Thu Muay Thai · Fri Lift–Full+Neck/Core · Sat BJJ / open mat · **Sun REST**
+**Combat:** 3×/week (Tue, Thu, Sat) at BETA Academy. **Lift:** 3×/week (Mon, Wed, Fri).
 
-## Upper A — strength
+## Why 3 + 3 (not 4 lift + combat on top)
+Stacking 3 hard combat sessions on the old 4-day lift split is a fast track to burnout, nagging injuries, and — on a bulk — stalled weight. Three focused strength days keep and build muscle; combat brings the conditioning, the skill, and the reason you're doing this. One full rest day is non-negotiable.
+
+## Mon · Lift — Lower (legs, fresh after Sunday)
 | Exercise | Sets × reps |
 |---|---|
-| Barbell bench press | 4 × 5–8 |
-| Barbell row | 4 × 6–10 |
+| Back squat | 4 × 5 |
+| Romanian deadlift | 3 × 6–8 |
+| Bulgarian split squat | 2 × 8/leg |
+| Standing calf raise | 3 × 12–15 |
+| Hanging leg raise | 3 × 12 |
+
+## Wed · Lift — Push / Pull (upper)
+| Exercise | Sets × reps |
+|---|---|
+| Bench press | 4 × 5–8 |
+| Weighted pull-up / row | 4 × 6–10 |
 | Overhead press | 3 × 6–10 |
-| Lat pulldown | 3 × 8–12 |
+| Lat pulldown | 3 × 10–12 |
+| Lateral raise | 3 × 15 |
+| Curl + triceps superset | 2–3 × 12 |
+
+## Fri · Lift — Full body + armor
+| Exercise | Sets × reps |
+|---|---|
 | Incline DB press | 3 × 8–12 |
-| Barbell curl | 3 × 8–12 |
-| Triceps pushdown | 3 × 10–15 |
-
-## Lower A — strength
-| Exercise | Sets × reps |
-|---|---|
-| Back squat | 4 × 5–8 |
-| Romanian deadlift | 3 × 6–10 |
-| Bulgarian split squat | 3 × 8–12 |
-| Leg curl | 3 × 10–15 |
-| Standing calf raise | 4 × 10–15 |
-| Hanging leg raise | 3 × 10–15 |
-
-## Upper B — hypertrophy
-| Exercise | Sets × reps |
-|---|---|
-| Weighted pull-up / pulldown | 4 × 8–12 |
-| Incline barbell press | 4 × 8–12 |
 | Seated cable row | 3 × 10–12 |
-| DB shoulder press | 3 × 10–12 |
-| Lateral raises | 4 × 12–20 |
-| Hammer curls | 3 × 10–15 |
-| Overhead triceps ext. | 3 × 10–15 |
+| Trap-bar / RDL hinge | 2 × 8 |
+| **Neck harness (4-way)** | 3 × 15 |
+| Loaded carries / grip | 3 sets |
+| Hanging or cable core | 3 × 12 |
 
-## Lower B — hypertrophy
-| Exercise | Sets × reps |
-|---|---|
-| Deadlift | 3 × 4–6 |
-| Leg press | 4 × 10–15 |
-| Walking lunges | 3 × 10–12/leg |
-| Leg extension | 3 × 12–15 |
-| Seated calf raise | 4 × 12–20 |
-| Cable crunch | 3 × 10–15 |
+> **Train your neck.** It's the single best protector against strikes and the most-skipped lift. Add it Friday and you spar safer.
 
-## Progression
-Double progression: start at the bottom of the rep range, add a rep each week until you hit the top of every set, then add 2.5–5 lb and reset. **Log every set in the dashboard's Lift tab** (it auto-builds your PR board).
+## Tue / Thu · Muay Thai (BETA Academy, ~60 min)
+Warm-up + shadow → technique (hands/kicks/knees/elbows) → pad & bag rounds → light clinch/drills → conditioning finisher.
+
+## Sat · BJJ / Open Mat (BETA Academy, 60–75 min)
+Lower-impact skill day: warm-up → technique (positions & subs) → positional rounds → easy live rolls. Good active recovery for the legs.
+
+## Fuel (or it stalls)
+Combat burns ~500–800 cal a session. **Dante (bulking):** add ~400–600 cal on combat days (extra mass-gainer smoothie + carbs), keep protein ≥155g. If the scale drops two weeks running, go to 2 combat days or eat more. **Both:** sleep 8h — recovery is now the bottleneck, not effort.
 
 ## Cardio
-You're an ex-runner — keep just **1–2 easy 20–30 min zone-2 runs a week** to hold your engine. Skip hard HIIT while bulking; it eats the surplus.
+Combat is your cardio now. Keep at most **one easy 20-min zone-2 walk/jog** for recovery; skip hard HIIT while bulking.
 
-## Notes
-Tall + long limbs: prioritize full range of motion and clean form over ego weight. **Muscle = training + the surplus + sleep** — miss any one and it stalls.
+## Progression
+- **Lifting:** same double-progression — start low in the rep range, add a rep weekly, then +2.5–5 lb and reset. Log every set in the Lift tab.
+- **Combat:** consistency beats intensity early. Show up all 3×/week, drill the fundamentals, spar light. Skill compounds like reps; ego gets you hurt.

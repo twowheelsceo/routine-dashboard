@@ -210,7 +210,7 @@ const KEY='rd_v1';
 const PLAYERS=['Aidan','Dante'];
 const QUESTS=[
   {id:'plan',label:'Write top-3 if-then plan',pts:10},
-  {id:'workout',label:'Train (per program)',pts:15,nn:1},
+  {id:'workout',label:'Train — lift or combat',pts:15,nn:1},
   {id:'protein',label:'Hit protein target',pts:10,auto:'protein',nn:1},
   {id:'cal',label:'Hit calorie target',pts:10,auto:'cal'},
   {id:'meditate',label:'10-min meditation',pts:5},
@@ -458,16 +458,18 @@ const DIET={
  meals:['Chicken-thigh burrito bowls','Beef & rice power bowls','Egg + potato breakfast scramble (batch)','Tuna/salmon pasta salad','Lentil + beef chili','Teriyaki chicken + rice stir-fry']
 };
 const WORKOUT={
- split:'4-day Upper / Lower — every muscle trained twice a week, the proven sweet spot for lean muscle gain.',
- schedule:'Mon Upper A · Tue Lower A · Thu Upper B · Fri Lower B. (Wednesday + weekend off.)',
- progression:'Double progression: start at the bottom of the rep range, add a rep each week until you hit the top of every set, then add 2.5–5 lb and reset. Log every set in the Lift tab.',
- cardio:'You’re an ex-runner — keep just 1–2 easy 20–30 min zone-2 runs a week to hold your engine. Skip hard HIIT while bulking; it eats the surplus.',
- note:'Tall + long limbs: prioritize full range of motion and clean form over ego weight. Muscle = training + the surplus + sleep — miss any one and it stalls.',
+ split:'Concurrent combat + strength. Muay Thai / BJJ is the engine now (3×/wk at BETA Academy); lifting drops to 3×/wk strength to protect recovery and add power to your strikes.',
+ schedule:'Mon Lift–Legs · Tue Muay Thai · Wed Lift–Push/Pull · Thu Muay Thai · Fri Lift–Full + Neck/Core · Sat BJJ / open mat · Sun REST.',
+ progression:'Lifting: same double-progression, just 3 days now — log every set in the Lift tab. Combat: consistency beats intensity early. Show up all 3×/week, drill fundamentals, spar light. Skill compounds like reps; ego gets you hurt.',
+ cardio:'Combat IS your cardio now — Muay Thai rounds burn ~500–800 cal. Cut runs to at most one easy 20-min zone-2 walk/jog for recovery.',
+ note:'Fuel it or lose the gains. Combat torches calories: Dante (bulking) add ~400–600 cal on combat days (extra mass-gainer smoothie + carbs), keep protein ≥155g — if the scale drops two weeks running, drop to 2 combat days or eat more. Both of you: train your NECK (top strike protector) and sleep 8h. Recovery is the bottleneck now, not effort.',
  days:[
-  ['Upper A — strength',[['Barbell bench press','4 × 5–8'],['Barbell row','4 × 6–10'],['Overhead press','3 × 6–10'],['Lat pulldown','3 × 8–12'],['Incline DB press','3 × 8–12'],['Barbell curl','3 × 8–12'],['Triceps pushdown','3 × 10–15']]],
-  ['Lower A — strength',[['Back squat','4 × 5–8'],['Romanian deadlift','3 × 6–10'],['Bulgarian split squat','3 × 8–12'],['Leg curl','3 × 10–15'],['Standing calf raise','4 × 10–15'],['Hanging leg raise','3 × 10–15']]],
-  ['Upper B — hypertrophy',[['Weighted pull-up / pulldown','4 × 8–12'],['Incline barbell press','4 × 8–12'],['Seated cable row','3 × 10–12'],['DB shoulder press','3 × 10–12'],['Lateral raises','4 × 12–20'],['Hammer curls','3 × 10–15'],['Overhead triceps ext.','3 × 10–15']]],
-  ['Lower B — hypertrophy',[['Deadlift','3 × 4–6'],['Leg press','4 × 10–15'],['Walking lunges','3 × 10–12/leg'],['Leg extension','3 × 12–15'],['Seated calf raise','4 × 12–20'],['Cable crunch','3 × 10–15']]]
+  ['Mon · Lift — Lower (legs, fresh)',[['Back squat','4 × 5'],['Romanian deadlift','3 × 6–8'],['Bulgarian split squat','2 × 8/leg'],['Standing calf raise','3 × 12–15'],['Hanging leg raise','3 × 12']]],
+  ['Tue · Muay Thai — BETA Academy',[['Warm-up + shadow / rope','~10 min'],['Technique — hands, kicks, knees, elbows','~15 min'],['Pad rounds + heavy bag','~20 min'],['Light clinch / partner drills','~10 min'],['Conditioning finisher','~5 min']]],
+  ['Wed · Lift — Push / Pull (upper)',[['Bench press','4 × 5–8'],['Weighted pull-up / row','4 × 6–10'],['Overhead press','3 × 6–10'],['Lat pulldown','3 × 10–12'],['Lateral raise','3 × 15'],['Curl + triceps superset','2–3 × 12']]],
+  ['Thu · Muay Thai — BETA Academy',[['Warm-up + shadow','~10 min'],['Technique + combinations','~15 min'],['Pad & bag rounds','~20 min'],['Clinch / partner drills','~10 min'],['Core + conditioning','~5 min']]],
+  ['Fri · Lift — Full body + armor',[['Incline DB press','3 × 8–12'],['Seated cable row','3 × 10–12'],['Trap-bar / RDL hinge','2 × 8'],['Neck harness (4-way)','3 × 15'],['Loaded carries / grip','3 sets'],['Hanging or cable core','3 × 12']]],
+  ['Sat · BJJ / Open Mat — BETA Academy',[['Warm-up + movement drills','~10 min'],['Technique — positions & subs','~20 min'],['Positional rounds','~20 min'],['Easy live rolls / open mat','~15 min'],['Lower-impact skill day','60–75 min']]]
  ]
 };
 let planSub='habits';
