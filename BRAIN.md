@@ -7,7 +7,8 @@ Personal operating system for **Aidan & Dante**. Lives in the routine dashboard 
 - [[DIET]] — lean-muscle diet plan, foods, targets (eat every meal at home)
 - [[MEALS]] — rotating 4-week meal plan + weekly grocery lists
 - [[ACCOUNTABILITY]] — reminders + consequences engine (stakes, streak-freezes, if-then cues, phone calendar)
-- [[WORKOUT]] — 4-day Upper/Lower training split
+- [[WORKOUT]] — 3× strength + 3× combat (concurrent plan)
+- [[COMBAT]] — Muay Thai + BJJ at BETA Academy (DC) · gym pick + sign-up plan
 - [[BOOKS]] — the first 10 books to read
 
 ## The dashboard
